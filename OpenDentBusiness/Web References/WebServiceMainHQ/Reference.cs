@@ -29,6 +29,12 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     [System.Web.Services.WebServiceBindingAttribute(Name="WebServiceMainHQSoap", Namespace="https://www.opendental.com/OpenDentalWebServiceHQ/")]
     public partial class WebServiceMainHQ : System.Web.Services.Protocols.SoapHttpClientProtocol {
         
+        private System.Threading.SendOrPostCallback CheckFHIRAPIKeyOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback GenerateFHIRAPIKeyOperationCompleted;
+        
+        private System.Threading.SendOrPostCallback AssignFHIRAPIKeyOperationCompleted;
+        
         private System.Threading.SendOrPostCallback GetFHIRAPIKeysForOfficeOperationCompleted;
         
         private System.Threading.SendOrPostCallback UpdateFHIRKeyStatusOperationCompleted;
@@ -151,6 +157,8 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback GetAdvertisingPostcardsAccountsOperationCompleted;
         
+        private System.Threading.SendOrPostCallback GetCareCreditBatchTimesOperationCompleted;
+        
         private System.Threading.SendOrPostCallback ManageAdvertisingPostcardsAccountOperationCompleted;
         
         private System.Threading.SendOrPostCallback GetPostcardManiaSSOOperationCompleted;
@@ -211,12 +219,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         
         private System.Threading.SendOrPostCallback EnableAdditionalFeaturesOperationCompleted;
         
-        private System.Threading.SendOrPostCallback CheckFHIRAPIKeyOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback GenerateFHIRAPIKeyOperationCompleted;
-        
-        private System.Threading.SendOrPostCallback AssignFHIRAPIKeyOperationCompleted;
-        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
@@ -254,6 +256,15 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 this.useDefaultCredentialsSetExplicitly = true;
             }
         }
+        
+        /// <remarks/>
+        public event CheckFHIRAPIKeyCompletedEventHandler CheckFHIRAPIKeyCompleted;
+        
+        /// <remarks/>
+        public event GenerateFHIRAPIKeyCompletedEventHandler GenerateFHIRAPIKeyCompleted;
+        
+        /// <remarks/>
+        public event AssignFHIRAPIKeyCompletedEventHandler AssignFHIRAPIKeyCompleted;
         
         /// <remarks/>
         public event GetFHIRAPIKeysForOfficeCompletedEventHandler GetFHIRAPIKeysForOfficeCompleted;
@@ -439,6 +450,9 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event GetAdvertisingPostcardsAccountsCompletedEventHandler GetAdvertisingPostcardsAccountsCompleted;
         
         /// <remarks/>
+        public event GetCareCreditBatchTimesCompletedEventHandler GetCareCreditBatchTimesCompleted;
+        
+        /// <remarks/>
         public event ManageAdvertisingPostcardsAccountCompletedEventHandler ManageAdvertisingPostcardsAccountCompleted;
         
         /// <remarks/>
@@ -529,13 +543,91 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         public event EnableAdditionalFeaturesCompletedEventHandler EnableAdditionalFeaturesCompleted;
         
         /// <remarks/>
-        public event CheckFHIRAPIKeyCompletedEventHandler CheckFHIRAPIKeyCompleted;
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/CheckFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string CheckFHIRAPIKey(string officeData) {
+            object[] results = this.Invoke("CheckFHIRAPIKey", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
         
         /// <remarks/>
-        public event GenerateFHIRAPIKeyCompletedEventHandler GenerateFHIRAPIKeyCompleted;
+        public void CheckFHIRAPIKeyAsync(string officeData) {
+            this.CheckFHIRAPIKeyAsync(officeData, null);
+        }
         
         /// <remarks/>
-        public event AssignFHIRAPIKeyCompletedEventHandler AssignFHIRAPIKeyCompleted;
+        public void CheckFHIRAPIKeyAsync(string officeData, object userState) {
+            if ((this.CheckFHIRAPIKeyOperationCompleted == null)) {
+                this.CheckFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFHIRAPIKeyOperationCompleted);
+            }
+            this.InvokeAsync("CheckFHIRAPIKey", new object[] {
+                        officeData}, this.CheckFHIRAPIKeyOperationCompleted, userState);
+        }
+        
+        private void OnCheckFHIRAPIKeyOperationCompleted(object arg) {
+            if ((this.CheckFHIRAPIKeyCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.CheckFHIRAPIKeyCompleted(this, new CheckFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GenerateFHIRAPIKey(string officeData) {
+            object[] results = this.Invoke("GenerateFHIRAPIKey", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GenerateFHIRAPIKeyAsync(string officeData) {
+            this.GenerateFHIRAPIKeyAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void GenerateFHIRAPIKeyAsync(string officeData, object userState) {
+            if ((this.GenerateFHIRAPIKeyOperationCompleted == null)) {
+                this.GenerateFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGenerateFHIRAPIKeyOperationCompleted);
+            }
+            this.InvokeAsync("GenerateFHIRAPIKey", new object[] {
+                        officeData}, this.GenerateFHIRAPIKeyOperationCompleted, userState);
+        }
+        
+        private void OnGenerateFHIRAPIKeyOperationCompleted(object arg) {
+            if ((this.GenerateFHIRAPIKeyCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GenerateFHIRAPIKeyCompleted(this, new GenerateFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string AssignFHIRAPIKey(string officeData) {
+            object[] results = this.Invoke("AssignFHIRAPIKey", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void AssignFHIRAPIKeyAsync(string officeData) {
+            this.AssignFHIRAPIKeyAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void AssignFHIRAPIKeyAsync(string officeData, object userState) {
+            if ((this.AssignFHIRAPIKeyOperationCompleted == null)) {
+                this.AssignFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAssignFHIRAPIKeyOperationCompleted);
+            }
+            this.InvokeAsync("AssignFHIRAPIKey", new object[] {
+                        officeData}, this.AssignFHIRAPIKeyOperationCompleted, userState);
+        }
+        
+        private void OnAssignFHIRAPIKeyOperationCompleted(object arg) {
+            if ((this.AssignFHIRAPIKeyCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.AssignFHIRAPIKeyCompleted(this, new AssignFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
         
         /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetFHIRAPIKeysForOffice", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
@@ -2322,6 +2414,35 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GetCareCreditBatchTimes", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public string GetCareCreditBatchTimes(string officeData) {
+            object[] results = this.Invoke("GetCareCreditBatchTimes", new object[] {
+                        officeData});
+            return ((string)(results[0]));
+        }
+        
+        /// <remarks/>
+        public void GetCareCreditBatchTimesAsync(string officeData) {
+            this.GetCareCreditBatchTimesAsync(officeData, null);
+        }
+        
+        /// <remarks/>
+        public void GetCareCreditBatchTimesAsync(string officeData, object userState) {
+            if ((this.GetCareCreditBatchTimesOperationCompleted == null)) {
+                this.GetCareCreditBatchTimesOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGetCareCreditBatchTimesOperationCompleted);
+            }
+            this.InvokeAsync("GetCareCreditBatchTimes", new object[] {
+                        officeData}, this.GetCareCreditBatchTimesOperationCompleted, userState);
+        }
+        
+        private void OnGetCareCreditBatchTimesOperationCompleted(object arg) {
+            if ((this.GetCareCreditBatchTimesCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.GetCareCreditBatchTimesCompleted(this, new GetCareCreditBatchTimesCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/ManageAdvertisingPostcardsAccou" +
             "nt", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         public string ManageAdvertisingPostcardsAccount(string officeData) {
@@ -3201,93 +3322,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         }
         
         /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/CheckFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string CheckFHIRAPIKey(string officeData) {
-            object[] results = this.Invoke("CheckFHIRAPIKey", new object[] {
-                        officeData});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void CheckFHIRAPIKeyAsync(string officeData) {
-            this.CheckFHIRAPIKeyAsync(officeData, null);
-        }
-        
-        /// <remarks/>
-        public void CheckFHIRAPIKeyAsync(string officeData, object userState) {
-            if ((this.CheckFHIRAPIKeyOperationCompleted == null)) {
-                this.CheckFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnCheckFHIRAPIKeyOperationCompleted);
-            }
-            this.InvokeAsync("CheckFHIRAPIKey", new object[] {
-                        officeData}, this.CheckFHIRAPIKeyOperationCompleted, userState);
-        }
-        
-        private void OnCheckFHIRAPIKeyOperationCompleted(object arg) {
-            if ((this.CheckFHIRAPIKeyCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.CheckFHIRAPIKeyCompleted(this, new CheckFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/GenerateFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string GenerateFHIRAPIKey(string officeData) {
-            object[] results = this.Invoke("GenerateFHIRAPIKey", new object[] {
-                        officeData});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void GenerateFHIRAPIKeyAsync(string officeData) {
-            this.GenerateFHIRAPIKeyAsync(officeData, null);
-        }
-        
-        /// <remarks/>
-        public void GenerateFHIRAPIKeyAsync(string officeData, object userState) {
-            if ((this.GenerateFHIRAPIKeyOperationCompleted == null)) {
-                this.GenerateFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnGenerateFHIRAPIKeyOperationCompleted);
-            }
-            this.InvokeAsync("GenerateFHIRAPIKey", new object[] {
-                        officeData}, this.GenerateFHIRAPIKeyOperationCompleted, userState);
-        }
-        
-        private void OnGenerateFHIRAPIKeyOperationCompleted(object arg) {
-            if ((this.GenerateFHIRAPIKeyCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.GenerateFHIRAPIKeyCompleted(this, new GenerateFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
-        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("https://www.opendental.com/OpenDentalWebServiceHQ/AssignFHIRAPIKey", RequestNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", ResponseNamespace="https://www.opendental.com/OpenDentalWebServiceHQ/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
-        public string AssignFHIRAPIKey(string officeData) {
-            object[] results = this.Invoke("AssignFHIRAPIKey", new object[] {
-                        officeData});
-            return ((string)(results[0]));
-        }
-        
-        /// <remarks/>
-        public void AssignFHIRAPIKeyAsync(string officeData) {
-            this.AssignFHIRAPIKeyAsync(officeData, null);
-        }
-        
-        /// <remarks/>
-        public void AssignFHIRAPIKeyAsync(string officeData, object userState) {
-            if ((this.AssignFHIRAPIKeyOperationCompleted == null)) {
-                this.AssignFHIRAPIKeyOperationCompleted = new System.Threading.SendOrPostCallback(this.OnAssignFHIRAPIKeyOperationCompleted);
-            }
-            this.InvokeAsync("AssignFHIRAPIKey", new object[] {
-                        officeData}, this.AssignFHIRAPIKeyOperationCompleted, userState);
-        }
-        
-        private void OnAssignFHIRAPIKeyOperationCompleted(object arg) {
-            if ((this.AssignFHIRAPIKeyCompleted != null)) {
-                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
-                this.AssignFHIRAPIKeyCompleted(this, new AssignFHIRAPIKeyCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
-            }
-        }
-        
-        /// <remarks/>
         public new void CancelAsync(object userState) {
             base.CancelAsync(userState);
         }
@@ -3303,6 +3337,110 @@ namespace OpenDentBusiness.WebServiceMainHQ {
                 return true;
             }
             return false;
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    public delegate void CheckFHIRAPIKeyCompletedEventHandler(object sender, CheckFHIRAPIKeyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class CheckFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal CheckFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    public delegate void GenerateFHIRAPIKeyCompletedEventHandler(object sender, GenerateFHIRAPIKeyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GenerateFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GenerateFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    public delegate void AssignFHIRAPIKeyCompletedEventHandler(object sender, AssignFHIRAPIKeyCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class AssignFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal AssignFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    public delegate void GetFHIRAPIKeysForOfficeCompletedEventHandler(object sender, GetFHIRAPIKeysForOfficeCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetFHIRAPIKeysForOfficeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetFHIRAPIKeysForOfficeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
         }
     }
     
@@ -4061,11 +4199,11 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
     public delegate void ProcessUSPSAddressValidationRequestCompletedEventHandler(object sender, ProcessUSPSAddressValidationRequestCompletedEventArgs e);
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     public partial class ProcessUSPSAddressValidationRequestCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
@@ -4087,7 +4225,7 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     }
     
     /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.4084.0")]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
     public delegate void GenerateShortGUIDsCompletedEventHandler(object sender, GenerateShortGUIDsCompletedEventArgs e);
     
     /// <remarks/>
@@ -4868,6 +5006,32 @@ namespace OpenDentBusiness.WebServiceMainHQ {
     
     /// <remarks/>
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    public delegate void GetCareCreditBatchTimesCompletedEventHandler(object sender, GetCareCreditBatchTimesCompletedEventArgs e);
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    public partial class GetCareCreditBatchTimesCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
+        
+        private object[] results;
+        
+        internal GetCareCreditBatchTimesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
+                base(exception, cancelled, userState) {
+            this.results = results;
+        }
+        
+        /// <remarks/>
+        public string Result {
+            get {
+                this.RaiseExceptionIfNecessary();
+                return ((string)(this.results[0]));
+            }
+        }
+    }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
     public delegate void ManageAdvertisingPostcardsAccountCompletedEventHandler(object sender, ManageAdvertisingPostcardsAccountCompletedEventArgs e);
     
     /// <remarks/>
@@ -5633,110 +5797,6 @@ namespace OpenDentBusiness.WebServiceMainHQ {
         private object[] results;
         
         internal EnableAdditionalFeaturesCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void CheckFHIRAPIKeyCompletedEventHandler(object sender, CheckFHIRAPIKeyCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class CheckFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal CheckFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void GenerateFHIRAPIKeyCompletedEventHandler(object sender, GenerateFHIRAPIKeyCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GenerateFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GenerateFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void AssignFHIRAPIKeyCompletedEventHandler(object sender, AssignFHIRAPIKeyCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class AssignFHIRAPIKeyCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal AssignFHIRAPIKeyCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
-                base(exception, cancelled, userState) {
-            this.results = results;
-        }
-        
-        /// <remarks/>
-        public string Result {
-            get {
-                this.RaiseExceptionIfNecessary();
-                return ((string)(this.results[0]));
-            }
-        }
-    }
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    public delegate void GetFHIRAPIKeysForOfficeCompletedEventHandler(object sender, GetFHIRAPIKeysForOfficeCompletedEventArgs e);
-    
-    /// <remarks/>
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")]
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    public partial class GetFHIRAPIKeysForOfficeCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs {
-        
-        private object[] results;
-        
-        internal GetFHIRAPIKeysForOfficeCompletedEventArgs(object[] results, System.Exception exception, bool cancelled, object userState) : 
                 base(exception, cancelled, userState) {
             this.results = results;
         }

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Bridges;
+using CodeBase;
+using Newtonsoft.Json;
+using ODCrypt;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Serialization;
 using WebServiceSerializer;
-using CodeBase;
-using OpenDentBusiness.WebTypes;
-using ODCrypt;
-using Newtonsoft.Json;
-using Bridges;
 
 namespace OpenDentBusiness {
 	/// <summary>Per Sam - This class is usually used for web service calls dealing with billing, account management, and synch.</summary>
@@ -34,12 +33,12 @@ namespace OpenDentBusiness {
 			}
 			else {
 				service=new WebServiceMainHQReal();
-				if(ODBuild.IsDebug()) {					
+				if(ODBuild.IsDebug()) {
 					((WebServiceMainHQReal)service).Timeout=(int)TimeSpan.FromMinutes(60).TotalMilliseconds;
 				}
 			}
 			//This check MUST stay here, because some applications calling this method do not have database access and cannot update preference cache.
-			if(string.IsNullOrEmpty(webServiceHqUrl)) { //Default to the production URL.				
+			if(string.IsNullOrEmpty(webServiceHqUrl)) { //Default to the production URL.
 				service.Url=PrefC.GetString(PrefName.WebServiceHQServerURL);
 			}
 			else { //URL was provided so use that.
@@ -1174,6 +1173,28 @@ namespace OpenDentBusiness {
 		public static string GetLatestCloudClientVersion() {
 			string result=GetWebServiceMainHQInstance().GetLatestCloudClientVersion();
 			return WebSerializer.DeserializePrimitive<string>(result);
+		}
+
+		///<summary>Returns a DateTime set by HQ or minval if we failed to retrieve the value.</summary>
+		public static DateTime GetCareCreditBatchProcessTime() {
+			string payload=PayloadHelper.CreatePayload("",eServiceCode.Undefined);//Undefined to only check if they were ever a customer. Doesn't require support
+			try {
+				return WebSerializer.DeserializeTag<DateTime>(GetWebServiceMainHQInstance().GetCareCreditBatchTimes(payload),"DateTimeBatchProcess");
+			}
+			catch {
+				return DateTime.MinValue;
+			}
+		}
+
+		///<summary>Returns a DateTime set by HQ or minval if we failed to retrieve the value.</summary>
+		public static DateTime GetCareCreditBatchPullbackTime() {
+			string payload=PayloadHelper.CreatePayload("",eServiceCode.Undefined);//Undefined to only check if they were ever a customer. Doesn't require support
+			try {
+				return WebSerializer.DeserializeTag<DateTime>(GetWebServiceMainHQInstance().GetCareCreditBatchTimes(payload),"DateTimeBatchPullback");
+			}
+			catch {
+				return DateTime.MinValue;
+			}
 		}
 
 		///<summary>WebServiceMainHQ.GenerateShortGUIDs returns a list of these.</summary>

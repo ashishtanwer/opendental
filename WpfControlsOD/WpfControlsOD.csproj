@@ -298,6 +298,9 @@
     <Compile Include="Frms\FrmERoutingActionDefEdit.xaml.cs">
       <DependentUpon>FrmERoutingActionDefEdit.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Frms\FrmLicenseAccept.xaml.cs">
+      <DependentUpon>FrmLicenseAccept.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Frms\Frm_BasicTemplate.xaml.cs">
       <DependentUpon>Frm_BasicTemplate.xaml</DependentUpon>
     </Compile>
@@ -881,6 +884,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+		<Page Include="Frms\FrmLicenseAccept.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<SubType>Designer</SubType>
+		</Page>
     <Page Include="Frms\Frm_BasicTemplate.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

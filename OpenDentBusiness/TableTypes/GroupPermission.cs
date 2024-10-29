@@ -805,6 +805,12 @@ namespace OpenDentBusiness{
 		///<summary>256 - Internal Child Daycare only. Allow users to make changes to the daycare.</summary>
 		[Description("Child Daycare Edit")]
 		ChildDaycareEdit,
+		/////<summary>257 - Allow users to copy perio charts in the Perio Chart window.</summary>
+		//[Description("Perio Chart Copy")]
+		//PerioEditCopy,
+		///<summary>258 - For audit trail only. Logs when a license is accepted by a user.</summary>
+		[Description("License Accept")]
+		LicenseAccept=258,
 	}
 }
 

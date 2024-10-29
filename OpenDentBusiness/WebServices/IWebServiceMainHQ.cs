@@ -99,5 +99,6 @@ namespace OpenDentBusiness {
 		string BuildPaymentPortalRedirectUrl(string shortGuid);
 		string MsgToPaySend(string officeData);
 		string ProcessUSPSAddressValidationRequest(string payload);
+		string GetCareCreditBatchTimes(string officeData);
 	}
 }
