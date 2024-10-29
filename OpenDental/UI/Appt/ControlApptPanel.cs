@@ -3659,6 +3659,9 @@ namespace OpenDental.UI{
 					case EnumApptViewElement.PatientNamePref:
 						text=dataRoww["PatientNamePref"].ToString();
 						break;
+					case EnumApptViewElement.PatientWard:
+						text="Patient Ward: "+dataRoww["patientWard"].ToString();
+						break;
 					case EnumApptViewElement.PatNum:
 						text=dataRoww["patNum"].ToString();
 						break;
