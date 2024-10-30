@@ -339,6 +339,7 @@
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
         <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="LicenseAccept">258 - For audit trail only. Logs when a license is accepted by a user.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -474,6 +475,7 @@
         <EnumValue name="AiChatSession">254 - Only used at OD HQ. Ability to open the AI chat window.</EnumValue>
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
         <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
+        <EnumValue name="LicenseAccept">258 - For audit trail only. Logs when a license is accepted by a user.</EnumValue>
       </Enumeration>
     </column>
   </table>

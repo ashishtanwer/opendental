@@ -1513,6 +1513,21 @@ namespace OpenDentBusiness {
 			}
 			//End 46298
 		}//End of 24_1_80
+		
+		private static void To24_1_85() {
+			//Start B57668
+			string command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiVersion'";
+			if(Db.GetInt(command)>0) {
+				command="UPDATE programproperty SET PropertyValue='1' WHERE PropertyDesc='DoseSpotApiVersion'";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+			if(Db.GetInt(command)>0) {
+				command="UPDATE programproperty SET PropertyValue='0' WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+				Db.NonQ(command);
+			}
+			//End B57668
+		}//End of 24_1_85
 
 		private static void To24_2_1() {
 			string command;
@@ -1980,5 +1995,20 @@ namespace OpenDentBusiness {
 			}
 			//End 46298
 		}//End of 24_2_39
+
+		private static void To24_2_46() {
+				//Start B57668
+				string command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiVersion'";
+				if(Db.GetInt(command)>0) {
+					command="UPDATE programproperty SET PropertyValue='1' WHERE PropertyDesc='DoseSpotApiVersion'";
+					Db.NonQ(command);
+				}
+				command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+				if(Db.GetInt(command)>0) {
+					command="UPDATE programproperty SET PropertyValue='0' WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+					Db.NonQ(command);
+				}
+				//End B57668
+		}//End of 24_2_46
 	}
 }

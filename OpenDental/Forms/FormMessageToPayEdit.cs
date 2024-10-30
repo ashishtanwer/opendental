@@ -105,7 +105,15 @@ namespace OpenDental {
 		}
 
 		private bool CanSendSms() {
-			return PatientL.CheckPatientTextingAllowed(_patient,this);
+			if(!PatientL.CheckPatientTextingAllowed(_patient,this)) {
+				return false;
+			}
+			PatComm patComm=Patients.GetPatComms(ListTools.FromSingle(_patient.PatNum),_clinic).FirstOrDefault();
+			if(!(patComm?.IsSmsAnOption??false)) {
+				MsgBox.Show(this,"SMS is not an option for this patient");
+				return false;
+			}
+			return true;
 		}
 
 		private bool CanSendEmail() {
