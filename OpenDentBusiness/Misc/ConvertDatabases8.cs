@@ -221,6 +221,38 @@ namespace OpenDentBusiness {
 				Db.NonQ(command);
 			}
 		}
+
+		///<summary>Safe to run many times</summary>
+		private static void ObsolesceCDTCodesFor2025() {
+			#region I56520
+			if(CultureInfo.CurrentCulture.Name.EndsWith("US")) {//United States
+				//Move deprecated codes to the Obsolete procedure code category.
+				//Make sure the procedure code category exists before moving the procedure codes.
+				string procCatDescript="Obsolete";
+				long defNum=0;
+				string command="SELECT DefNum FROM definition WHERE Category=11 AND ItemName='"+POut.String(procCatDescript)+"'";//11 is DefCat.ProcCodeCats
+				DataTable dtDef=Db.GetTable(command);
+				if(dtDef.Rows.Count==0) { //The procedure code category does not exist, add it
+					command="SELECT COUNT(*) FROM definition WHERE Category=11";//11 is DefCat.ProcCodeCats
+					int countCats=PIn.Int(Db.GetCount(command));
+					command="INSERT INTO definition (Category,ItemName,ItemOrder) "
+							+"VALUES (11"+",'"+POut.String(procCatDescript)+"',"+POut.Int(countCats)+")";//11 is DefCat.ProcCodeCats
+					defNum=Db.NonQ(command,true);
+				}
+				else { //The procedure code category already exists, get the existing defnum
+					defNum=PIn.Long(dtDef.Rows[0]["DefNum"].ToString());
+				}
+				string[] cdtCodesDeleted=new string[] {
+					"D2941",
+					"D6095"
+				};
+				//Change the procedure codes' category to Obsolete.
+				command="UPDATE procedurecode SET ProcCat="+POut.Long(defNum)
+				+" WHERE ProcCode IN('"+string.Join("','",cdtCodesDeleted.Select(x => POut.String(x)))+"') ";
+				Db.NonQ(command);
+			}//end United States CDT codes update
+			#endregion I56520
+		}
 		#endregion
 
 		private static void To23_2_1() {
@@ -1997,18 +2029,22 @@ namespace OpenDentBusiness {
 		}//End of 24_2_39
 
 		private static void To24_2_46() {
-				//Start B57668
-				string command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiVersion'";
-				if(Db.GetInt(command)>0) {
-					command="UPDATE programproperty SET PropertyValue='1' WHERE PropertyDesc='DoseSpotApiVersion'";
-					Db.NonQ(command);
-				}
-				command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
-				if(Db.GetInt(command)>0) {
-					command="UPDATE programproperty SET PropertyValue='0' WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
-					Db.NonQ(command);
-				}
-				//End B57668
+			//Start B57668
+			string command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiVersion'";
+			if(Db.GetInt(command)>0) {
+				command="UPDATE programproperty SET PropertyValue='1' WHERE PropertyDesc='DoseSpotApiVersion'";
+				Db.NonQ(command);
+			}
+			command="SELECT COUNT(*) FROM programproperty WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+			if(Db.GetInt(command)>0) {
+				command="UPDATE programproperty SET PropertyValue='0' WHERE PropertyDesc='DoseSpotApiMigrationRequested'";
+				Db.NonQ(command);
+			}
+			//End B57668
 		}//End of 24_2_46
+
+		private static void To24_2_47() {
+			ObsolesceCDTCodesFor2025();
+		}
 	}
 }

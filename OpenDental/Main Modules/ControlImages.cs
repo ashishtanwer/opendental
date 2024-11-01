@@ -3890,9 +3890,6 @@ namespace OpenDental{
 }
 
 
-//Old Bug?
-//Mount thumbnails not refreshing?
-
 //Need to document how XVWeb and Suni use the old Images module. (might be done)
 
 //This new Imaging module will never support the following features:
