@@ -2046,5 +2046,12 @@ namespace OpenDentBusiness {
 		private static void To24_2_47() {
 			ObsolesceCDTCodesFor2025();
 		}
+
+		private static void To24_2_48() {
+			string command="INSERT INTO preference (PrefName,ValueString) VALUES ('CareCreditBatchProcessDateTime',"+POut.DateT(DateTime.MinValue,true)+")";
+			Db.NonQ(command);
+			command="INSERT INTO preference (PrefName,ValueString) VALUES ('CareCreditBatchPullbackDateTime',"+POut.DateT(DateTime.MinValue,true)+")";
+			Db.NonQ(command);
+		}//End of 24_2_48
 	}
 }
