@@ -2053,5 +2053,20 @@ namespace OpenDentBusiness {
 			command="INSERT INTO preference (PrefName,ValueString) VALUES ('CareCreditBatchPullbackDateTime',"+POut.DateT(DateTime.MinValue,true)+")";
 			Db.NonQ(command);
 		}//End of 24_2_48
+
+		private static void To24_2_50() {
+			string command;
+			//Start I57518
+			try {
+				if(!IndexExists("appointment","DateTStamp")) {
+					command="ALTER TABLE appointment ADD INDEX (DateTStamp)";
+					Db.NonQ(command);
+				}
+			}
+			catch(Exception ex) {
+				ex.DoNothing(); //Only an index. (Exception ex) required to catch thrown exception
+			}
+			//End I57518
+		}//End of 24_2_50
 	}
 }
