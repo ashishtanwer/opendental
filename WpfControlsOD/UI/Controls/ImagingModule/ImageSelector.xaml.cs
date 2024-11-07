@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -85,6 +86,7 @@ Only used once in Imaging module.
 			_cursorDrag=new Cursor(new MemoryStream(Properties.Resources.CursorDrag));
 			_toolTip=new ToolTip();
 			_toolTip.SetControlAndAction(this,ToolTipSetString);
+			Unloaded+=ImageSelector_Unloaded;
 		}
 		#endregion Constructor
 
@@ -636,6 +638,7 @@ Only used once in Imaging module.
 			border.MouseMove+=Item_MouseMove;
 			border.MouseRightButtonDown+=Item_MouseRightButtonDown;
 			border.MouseWheel+=Item_MouseWheel;
+			border.Unloaded+=Border_Unloaded;
 			stackPanel.Children.Add(border);
 		}
 
@@ -701,6 +704,7 @@ Only used once in Imaging module.
 				border.MouseMove+=Item_MouseMove;
 				border.MouseRightButtonDown+=Item_MouseRightButtonDown;
 				border.MouseWheel+=Item_MouseWheel;
+				border.Unloaded+=Border_Unloaded;
 				stackPanel.Children.Add(border);
 			}
 		}
@@ -768,6 +772,7 @@ Only used once in Imaging module.
 				border.MouseMove+=Item_MouseMove;
 				border.MouseRightButtonDown+=Item_MouseRightButtonDown;
 				border.MouseWheel+=Item_MouseWheel;
+				border.Unloaded+=Border_Unloaded;
 				wrapPanel.Children.Add(border);
 			}
 			stackPanel.Children.Add(wrapPanel);
@@ -939,6 +944,13 @@ Only used once in Imaging module.
 		#endregion Methods private
 
 		#region Methods private EventHandlers
+		private void Border_Unloaded(object sender,RoutedEventArgs e) {
+			Border border=(Border)sender;
+			if(border.Child!=null) {
+				border.Child=null;
+			}
+		}
+
 		private void butCollapse_Click(object sender, EventArgs e){
 			CollapseAll();
 			SaveExpandedPrefAll(false);
@@ -947,6 +959,15 @@ Only used once in Imaging module.
 		private void butExpand_Click(object sender, EventArgs e){
 			ExpandAll();
 			SaveExpandedPrefAll(true);
+		}
+
+		private void ImageSelector_Unloaded(object sender,RoutedEventArgs e) {
+			if(scrollViewer.Template!=null) {
+				ScrollBar scrollBarVertical=(ScrollBar)scrollViewer.Template.FindName("PART_VerticalScrollBar",scrollViewer);
+				if(scrollBarVertical!=null) {
+					scrollBarVertical.Template=null;
+				}
+			}
 		}
 
 		private void Item_DragEnter(object sender, DragEventArgs e){
@@ -1013,7 +1034,8 @@ Only used once in Imaging module.
 
 		///<summary>Also handles double click.</summary>
 		private void Item_MouseLeftButtonDown(object sender, MouseButtonEventArgs e){
-			Border border=(Border)sender;
+			Point point=e.GetPosition(this);
+			Border border=BorderFromPoint(point);
 			int idx=IndexFromBorder(border);
 			bool isDoubleClick=e.ClickCount==2;
 			if(isDoubleClick){

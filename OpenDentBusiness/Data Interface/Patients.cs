@@ -3585,7 +3585,7 @@ namespace OpenDentBusiness {
 			List<string> listPhones,bool doCompareFNameAgainstPreferred=false) 
 		{
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetBool(MethodBase.GetCurrentMethod(),lName,fName,birthDate,email,listPhones);
+				return Meth.GetBool(MethodBase.GetCurrentMethod(),lName,fName,birthDate,email,listPhones,doCompareFNameAgainstPreferred);
 			}
 			//Get all potential matches by name and birth date first.
 			List<long> listPatNums=GetListPatNumsByNameAndBirthday(lName,fName,birthDate,doCompareFNameAgainstPreferred);

@@ -2068,5 +2068,17 @@ namespace OpenDentBusiness {
 			}
 			//End I57518
 		}//End of 24_2_50
+
+		private static void To24_2_51() {
+			string command;
+			//Start I56324
+			command="SELECT COUNT(*) FROM preference WHERE PrefName='PayPlanItemDateShowProc'";
+			if(Db.GetInt(command)==0) {
+				command="INSERT INTO preference(PrefName,ValueString) VALUES('PayPlanItemDateShowProc','0')";
+				Db.NonQ(command);
+			}
+			//End I56324
+		}//End of 24_2_51
+
 	}
 }
