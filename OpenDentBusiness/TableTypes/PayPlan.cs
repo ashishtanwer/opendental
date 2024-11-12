@@ -63,6 +63,10 @@ namespace OpenDentBusiness{
 		///<summary>Holds the salted hash of the following paysplit fields: Guarantor, PayAmt, IsClosed, IsLocked. </summary>
 		public string SecurityHash;
 
+		public PayPlan() {
+			Signature="";
+		}
+
 		///<summary></summary>
 		public PayPlan Copy(){
 			return (PayPlan)this.MemberwiseClone();

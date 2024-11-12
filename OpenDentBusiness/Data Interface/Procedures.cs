@@ -2293,7 +2293,7 @@ namespace OpenDentBusiness {
 		///Make sure to make a security log after calling this method.  This method requires that Security.CurUser be set prior to invoking.
 		///Returns null procedure if one was not created for the patient.</summary>
 		public static Procedure CreateProcForPat(Patient pat,long codeNum,string surf,string toothNum,ProcStat procStatus,long provNum,long aptNum=0
-			,List<InsSub> subList=null,List<InsPlan> insPlanList=null,List<PatPlan> patPlanList=null,List<Benefit> benefitList=null,long clinicNum=-1) 
+			,List<InsSub> subList=null,List<InsPlan> insPlanList=null,List<PatPlan> patPlanList=null,List<Benefit> benefitList=null,long clinicNum=-1,DateTime dateAppt=default) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			if(codeNum < 1) {
@@ -2327,8 +2327,14 @@ namespace OpenDentBusiness {
 			}
 			proc.UserNum=Security.CurUser.UserNum;
 			proc.CodeNum=codeNum;
-			proc.ProcDate=DateTime.Today;
-			proc.DateTP=DateTime.Today;
+			if(dateAppt==default) {//01/01/01
+				proc.ProcDate=DateTime.Today;
+				proc.DateTP=DateTime.Today;
+			}
+			else {
+				proc.ProcDate=dateAppt;
+				proc.DateTP=dateAppt;
+			}
 			//The below logic is a trimmed down version of the code existing in ContrChart.AddQuick()
 			InsPlan insPlanPrimary=null;
 			InsSub insSubPrimary=null;
@@ -2369,7 +2375,7 @@ namespace OpenDentBusiness {
 		///<summary>Used by WebSched to create a new procedure for every proc code passed in.  Make sure to make a security log after calling this method.
 		///This method requires that Security.CurUser be set prior to invoking.  Returns an empty list if none were created for the patient.</summary>
 		public static List<Procedure> CreateProcsForPat(long patNum,List<long> listProcCodeNums,string surf,string toothNum,ProcStat procStatus
-			,long provNum,long aptNum,long clinicNum=-1) 
+			,long provNum,long aptNum,DateTime dateAppt,long clinicNum=-1) 
 		{
 			//No need to check MiddleTierRole; no call to db.
 			List<Procedure> listProcedures=new List<Procedure>();
@@ -2379,7 +2385,7 @@ namespace OpenDentBusiness {
 			List<PatPlan> patPlanList=PatPlans.Refresh(patNum);
 			List<Benefit> benefitList=Benefits.Refresh(patPlanList,subList);
 			foreach(long codeNum in listProcCodeNums) {
-				Procedure proc=CreateProcForPat(patient,codeNum,surf,toothNum,procStatus,provNum,aptNum,subList,insPlanList,patPlanList,benefitList,clinicNum);
+				Procedure proc=CreateProcForPat(patient,codeNum,surf,toothNum,procStatus,provNum,aptNum,subList,insPlanList,patPlanList,benefitList,clinicNum,dateAppt);
 				if(proc!=null) {
 					listProcedures.Add(proc);
 				}

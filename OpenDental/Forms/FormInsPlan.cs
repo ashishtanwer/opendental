@@ -1916,7 +1916,7 @@ namespace OpenDental {
 			FillBenefits();
 		}
 
-		private void EligibilityCheckCanada() {
+		private void EligibilityCheckCanada(Clearinghouse clearinghouseHq) {
 			if(!FillPlanCurFromForm()) {
 				return;
 			}
@@ -1929,14 +1929,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"Eligibility not supported by this carrier.");
 				return;
 			}
-			Clearinghouse clearinghouseHq=Canadian.GetCanadianClearinghouseHq(carrier);
 			Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
 			Cursor=Cursors.WaitCursor;
 			//string result="";
 			DateTime dateToday=DateTime.Today;
-			if(ODBuild.IsDebug()) {
-				dateToday=new DateTime(1999,1,4);//TODO: Remove after Canadian claim certification is complete.
-			}
 			Relat relat=(Relat)comboRelationship.SelectedIndex;
 			string patID=textPatID.Text;
 			try {
@@ -2334,7 +2330,7 @@ namespace OpenDental {
 				return;
 			}
 			if(clearinghouseHq.Eformat==ElectronicClaimFormat.Canadian) {
-				EligibilityCheckCanada();
+				EligibilityCheckCanada(clearinghouseHq);
 				return;
 			}
 			//Validate the 271 settings before sending the request, otherwise the request might take 10-20 seconds to run, then the user might be blocked after waiting.

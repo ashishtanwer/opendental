@@ -566,9 +566,9 @@ namespace OpenDental {
 			}
 		}
 
-		///<summary></summary>
-		private void LockTerms(bool isSaveData,bool isUiValid=true) {
-			if(isSaveData) {
+		///<summary>This is the gentle "lock", not the permanent one.</summary>
+		private void LockTerms(bool doSaveData,bool isUiValid=true) {
+			if(doSaveData) {
 				if(SaveData(isUiValid:isUiValid)) {
 					groupTerms.Enabled=false;
 					groupBoxFrequency.Enabled=false;
@@ -577,6 +577,7 @@ namespace OpenDental {
 					//failed saving. Return user to form.
 					return;
 				}
+				signatureBoxWrapper.FillSignature(_dynamicPaymentPlanData.PayPlan.SigIsTopaz,PayPlans.GetKeyDataForSignature(_dynamicPaymentPlanData.PayPlan),_dynamicPaymentPlanData.PayPlan.Signature);
 			}
 			groupTerms.Enabled=false;
 			groupBoxFrequency.Enabled=false;
@@ -998,9 +999,8 @@ namespace OpenDental {
 			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
 			formSheetFillEdit.SheetCur=sheet;
 			formSheetFillEdit.ShowDialog();
-			if(formSheetFillEdit.DialogResult!=DialogResult.OK) {
-				return;
-			}
+			//Even though they hit cancel on the "sign" portion, the save was already done.
+			//In that case, we do need to clear the signature.
 			//save signature
 			if(_dynamicPaymentPlanData.PayPlan.Signature=="") {//clear signature and hide sigbox if blank sig was saved
 				signatureBoxWrapper.ClearSignature();
