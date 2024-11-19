@@ -653,6 +653,7 @@ namespace OpenDentBusiness{
 				//case Permissions.AiChatSession:
 				//case Permissions.BadgeIdEdit
 				case EnumPermType.ChildDaycareEdit:
+				//case EnumPermType.MobileNotification:
 				return false;//Does not have audit Trail if uncommented.
 			}
 			if(!PrefC.IsODHQ && permType.In(
