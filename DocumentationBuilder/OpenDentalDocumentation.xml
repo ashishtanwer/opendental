@@ -2660,7 +2660,7 @@
     </column>
     <column order="26" name="LineNumber" type="tinyint">
       <summary>Assigned when claim is created as a way to order the procs showing on a claim.  Indireclty goes out in X12 loop 2400.
-            Used in Canadian eclaims (field F07).</summary>
+            Used in Canadian eclaims (field F07). One based index. Is zero for total payments.</summary>
     </column>
     <column order="27" name="DedEst" type="double">
       <summary>-1 if blank.  Not sure why we need to allow -1.  Calculated automatically.  User cannot edit, but can use DedEstOverride instead.</summary>
@@ -8287,6 +8287,7 @@
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
         <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
         <EnumValue name="LicenseAccept">258 - For audit trail only. Logs when a license is accepted by a user.</EnumValue>
+        <EnumValue name="MobileNotification">261 - Used for logging only. Can be used to log whenever mobile notifications are inserted into the database.</EnumValue>
       </Enumeration>
     </column>
     <column order="5" name="FKey" type="bigint(20)">
@@ -15718,6 +15719,7 @@
         <EnumValue name="BadgeIdEdit">255 - Allow users to edit BadgeIds in the userod table.</EnumValue>
         <EnumValue name="ChildDaycareEdit">256 - Internal Child Daycare only. Allow users to make changes to the daycare.</EnumValue>
         <EnumValue name="LicenseAccept">258 - For audit trail only. Logs when a license is accepted by a user.</EnumValue>
+        <EnumValue name="MobileNotification">261 - Used for logging only. Can be used to log whenever mobile notifications are inserted into the database.</EnumValue>
       </Enumeration>
     </column>
     <column order="2" name="UserNum" type="bigint(20)" fk="userod">
