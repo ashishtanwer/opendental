@@ -1408,7 +1408,7 @@ Here is the desired behavior:
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName) || GetDocumentShowing(0).FileName.EndsWith(".dcm")){
+				if(ImageHelper.HasImageExtension(GetDocumentShowing(0).FileName)){
 					using Bitmap bitmapCopy=ImageHelper.CopyWithCropRotate(GetDocumentShowing(0),GetBitmapShowing(0));
 					if(bitmapCopy==null){
 						MessageBox.Show(Lan.g(this,"Unable to export, file not found."));
@@ -1469,7 +1469,7 @@ Here is the desired behavior:
 				if(saveFileDialog.ShowDialog()!=DialogResult.OK) {
 					return;
 				}
-				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName) || GetDocumentShowing(_idxSelectedInMount).FileName.EndsWith(".dcm"))
+				if(ImageHelper.HasImageExtension(GetDocumentShowing(_idxSelectedInMount).FileName))
 				{
 					//normal images and dicom will have the bitmap pulled from the screen
 					using Bitmap bitmapCopy=new Bitmap(_listMountItems[_idxSelectedInMount].Width,_listMountItems[_idxSelectedInMount].Height);
