@@ -1346,10 +1346,10 @@ Refresh();
 				if(GetHelpOverride()=="") {
 					formName=Name;
 				}
-				else{
+				else {
 					formName=GetHelpOverride();
 				}
-				try{
+				try {
 					bool isKeyValid=ODHelp.IsEncryptedKeyValid();//always true in debug
 					string manualPageURL=OpenDentalHelp.ODHelp.GetManualPage(formName,PrefC.GetString(PrefName.ProgramVersion),isKeyValid);
 					if(ODBuild.IsThinfinity()) {
@@ -1370,7 +1370,8 @@ Refresh();
 						MsgBox.Show("To use the Open Dental Help feature you must be on support.");
 					}
 				}
-				catch{
+				catch(Exception ex) {
+					MessageBox.Show(ex.Message);
 				}
 				return;
 			}
