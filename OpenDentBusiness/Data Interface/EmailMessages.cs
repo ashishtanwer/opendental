@@ -2780,13 +2780,14 @@ namespace OpenDentBusiness{
 			return replyMessage;
 		}
 
-		///<summary>Sets emailReply.ToAddress and emailRepl.FromAddress such that emailReply is a reply email to emailReceived.</summary>
+		///<summary>Sets emailReply.ToAddress and emailReply.FromAddress such that emailReply is a reply email to emailReceived.</summary>
 		public static void FillEmailAddressesForReply(EmailMessage emailReply,EmailMessage emailReceived,EmailAddress emailAddressSender,bool isReplyAll) {
 			emailReply.ToAddress=ProcessInlineEncodedText(emailReceived.FromAddress);
 			if(isReplyAll) {
 				emailReceived.ToAddress.Split(',')//email@od.com,email2@od.com,...
 					.Select(x => ProcessInlineEncodedText(x).Trim())//Decode any UTF-8 or otherwise
-					.Where(x => !x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()))//Since we are replying, remove our current email from list
+					.Where(x => !x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) 
+						|| (!emailAddressSender.SenderAddress.IsNullOrEmpty() && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower())))//Since we are replying, remove our current email from list
 					.ForEach(x => emailReply.ToAddress+=","+x);
 			}
 			emailReply.FromAddress=ProcessInlineEncodedText(emailReceived.RecipientAddress);
@@ -2803,7 +2804,8 @@ namespace OpenDentBusiness{
 			List<string> temp=emailReceived.CcAddress.Split(',')
 				.Select(x => ProcessInlineEncodedText(x).Trim())
 				.ToList()
-				.FindAll(x=>!x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower()));
+				.FindAll(x=>!x.ToLower().Contains(emailAddressSender.EmailUsername.ToLower()) 
+					|| (!emailAddressSender.SenderAddress.IsNullOrEmpty() && !x.ToLower().Contains(emailAddressSender.SenderAddress.ToLower())));
 			//Loop through the email addresses, combining them into a comma separated list string.
 			for(int i=0; i<temp.Count;i++){
 				//First address
