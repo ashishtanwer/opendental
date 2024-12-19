@@ -1105,6 +1105,7 @@ Only used once in Imaging module.
 					}
 					if(System.IO.Path.GetExtension(document.FileName).ToLower()==".pdf") {
 						_isLeftMouseDownDragging=true;//Still want to be able to drag a PDF file
+						((IInputElement)sender).CaptureMouse();
 						return;//no refresh on the same node for pdf
 					}
 				}

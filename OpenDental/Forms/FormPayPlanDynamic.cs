@@ -194,7 +194,8 @@ namespace OpenDental {
 			if(index==-1) {//Should not happen, menu item is only enabled when exactly 1 row is selected.
 				return;
 			}
-			if(_dynamicPaymentPlanData.PayPlan.IsNew) {
+			//If the payment plan is new or if there is any new production added that has not been saved yet.
+			if(_dynamicPaymentPlanData.PayPlan.IsNew || _dynamicPaymentPlanData.ListPayPlanLinks.Any(x=>x.PayPlanLinkNum==0)){
 				MsgBox.Show(Lan.g(this,"The current payment plan hasn't been saved yet. Save the pay plan to edit charges."));
 				return;
 			}
@@ -222,6 +223,9 @@ namespace OpenDental {
 			if(listPayPlanCharges.Count>1) {
 				using FormPayPlanChargeSelection formPayPlanChargeSelection=new FormPayPlanChargeSelection(listPayPlanCharges,_dynamicPaymentPlanData);
 				formPayPlanChargeSelection.ShowDialog();
+				if(formPayPlanChargeSelection.DialogResult==DialogResult.Cancel) {
+					return;
+				}
 			}
 			else {
 				using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(listPayPlanCharges[0],_dynamicPaymentPlanData.PayPlan,_dynamicPaymentPlanData);
@@ -332,7 +336,7 @@ namespace OpenDental {
 			_dynamicPaymentPlanData.ListPayPlanChargesExpected=listPayPlanChargesExpected;
 			//The above method call will set the terms.AreTermsValid field.
 			if(!terms.AreTermsValid) {
-				if(isSilent) {
+				if(!isSilent) {
 					MsgBox.Show("This payment plan will never be paid off. The interest is too high or the payment amount is too low.");
 				}
 				gridCharges.EndUpdate();
@@ -847,7 +851,8 @@ namespace OpenDental {
 			if(gridCharges.ListGridRows[e.Row].Tag==null) {//Prevent double clicking on the "Current Totals" row
 				return;
 			}
-			if(_dynamicPaymentPlanData.PayPlan.IsNew){
+			//If the payment plan is new or if there is any new production added that has not been saved yet.
+			if(_dynamicPaymentPlanData.PayPlan.IsNew || _dynamicPaymentPlanData.ListPayPlanLinks.Any(x=>x.PayPlanLinkNum==0)){
 				MsgBox.Show(Lan.g(this,"The current payment plan hasn't been saved yet. Save the pay plan to edit charges."));
 				return;
 			}
@@ -872,6 +877,9 @@ namespace OpenDental {
 				if(listPayPlanCharges.Count>1) {
 					using FormPayPlanChargeSelection formPayPlanChargeSelection=new FormPayPlanChargeSelection(listPayPlanCharges,_dynamicPaymentPlanData);
 					formPayPlanChargeSelection.ShowDialog();
+					if(formPayPlanChargeSelection.DialogResult==DialogResult.Cancel) {
+						return;
+					}
 				}
 				else {
 					using FormPayPlanChargeEdit formPayPlanChargeEdit=new FormPayPlanChargeEdit(listPayPlanCharges[0],_dynamicPaymentPlanData.PayPlan,_dynamicPaymentPlanData);
