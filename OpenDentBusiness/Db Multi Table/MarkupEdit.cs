@@ -160,10 +160,7 @@ namespace OpenDentBusiness {
 				|| ProcessList(text,"#")!=text || ProcessList(text,"*")!=text;
 		}
 
-		///<summary>Surround with try/catch.  Also aggregates the content into the master page (unless specified to not).  
-		///If isPreviewOnly, then the internal links will not be checked to see if the page exists, as it would make the refresh sluggish.  
-		///And isPreviewOnly also changes the pointer so that the page looks non-clickable.
-		///For emails, this only gets called while in the email edit window. The returned string will be used to switch between plain and html text.
+		///<summary>Surround with try/catch. Used for handling HTML emails and wiki markup since they both use the same editor. HTML emails have tables, images, text color, and fonts inserted as wiki markup so we need a central way to translate them to HTML. This means that HTML emails support all wiki markup except internal links. Also aggregates the content into the email master page (unless specified to not). If isPreviewOnly for wiki, then the internal links will not be checked to see if the page exists, as it would make the refresh sluggish. And isPreviewOnly also changes the pointer so that the page looks non-clickable. 
 		///</summary>
 		public static string TranslateToXhtml(string markupText,bool isPreviewOnly,bool hasWikiPageTitles=false,bool isEmail=false,bool canAggregate=true,
 			float scale=1) {

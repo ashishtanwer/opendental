@@ -1259,13 +1259,13 @@ namespace OpenDental{
 			float y=50f;
 			SizeF sizeF;
 			//Title
-			using Font fontTitle=new Font("Arial",LayoutManager.Scale(15));
+			using Font fontTitle=new Font("Arial",LayoutManager.ScaleFontODZoom(15));
 			string title=Lan.g(this,"Periodontal Charting");
 			sizeF=g.MeasureString(title,fontTitle);
 			g.DrawString(title,fontTitle,Brushes.Black,new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));
 			y+=sizeF.Height;
 			//Clinic Name
-			using Font font=new Font("Arial",LayoutManager.Scale(11));
+			using Font font=new Font("Arial",LayoutManager.ScaleFontODZoom(11));
 			sizeF=g.MeasureString(clinicName,font);
 			g.DrawString(clinicName,font,Brushes.Black,
 				new PointF(bitmapPerioPrintImage.Width/2f-sizeF.Width/2f,y));

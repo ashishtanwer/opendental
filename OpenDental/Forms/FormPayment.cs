@@ -3718,6 +3718,10 @@ namespace OpenDental {
 					textNote.Text=Lan.g(this,"Response from PayConnect:\r\nStatus: ")+(payConnectResponse.StatusCode??"")+Lan.g(this,"\r\nDescription: ")+payConnectResponse.Description??"";
 					if(formPayConnect2.WasPaymentAttempted){
 						_isCCDeclined=true;
+						if(!PrefC.GetBool(PrefName.PaymentsPromptForPayType)) {
+							string paytype=ProgramProperties.GetPropVal(program.ProgramNum,"PaymentType",_payment.ClinicNum);//paytype could be an empty string
+							listPayType.SelectedIndex=Defs.GetOrder(DefCat.PaymentTypes,PIn.Long(paytype));
+						}
 					}
 					return null;
 				}

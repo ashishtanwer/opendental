@@ -2161,7 +2161,7 @@ namespace OpenDentBusiness.Eclaims {
 			List<XConnectPatient> listXConnectPatientsAdditionalSubs=new List<XConnectPatient>();
 			List<long> listPatNums=new List<long>() { patient.PatNum };
 			List<PatPlan> listOtherPatPlans=XConnect._listPatPlans.FindAll(x => x.InsSubNum!=XConnect._claim.InsSubNum);
-			if(listOtherPatPlans.Count>0) {
+			if(listOtherPatPlans.Count>0 && XConnect._claim.ClaimType!="P") {
 				for(int i=0;i<listOtherPatPlans.Count;i++) {
 					XConnectPatient xConnectPatient=XConnectPatient.FromPatient(patient,listOtherPatPlans[i].InsSubNum,EnumXConnectPatientMemberType.ADDITIONAL_SUBSCRIBER,claim.PatRelat);
 					if(xConnectPatient.sequenceCode=="") {

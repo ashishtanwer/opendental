@@ -1363,9 +1363,9 @@ namespace OpenDentBusiness{
 				dataRow["prophy/PerioPastDue[P]"]=(Recalls.IsPatientPastDue(PIn.Long(tableRaw.Rows[d]["apptPatNum"].ToString()),dateTApt,true,listRecallsPastDue)? "P":"");
 				dataRow["production"]=productionAmt.ToString("c");//PIn.Double(tableRaw.Rows[r]["Production"].ToString()).ToString("c");
 				dataRow["productionVal"]=productionAmt.ToString();//tableRaw.Rows[r]["Production"].ToString();
-				decimal netProductionAmt=(productionAmt-writeoffPPOAmt-discountPlanAmt);
+				decimal netProductionAmt=(productionAmt-writeoffPPOAmt);
 				if(PrefC.GetBool(PrefName.ApptModuleAdjustmentsInProd)) {
-					netProductionAmt+=adjAmtForAppt-procDiscountAmt;
+					netProductionAmt+=adjAmtForAppt-procDiscountAmt-discountPlanAmt;
 				}
 				dataRow["netProduction"]=netProductionAmt.ToString("c");
 				dataRow["netProductionVal"]=netProductionAmt.ToString();
@@ -3890,11 +3890,10 @@ namespace OpenDentBusiness{
 			}
 			//Security.CurUser.UserNum gets set on MT by the DtoProcessor so it matches the user from the client WS.
 			userNum=Security.CurUser.UserNum;
-			bool isChanged=Crud.AppointmentCrud.Sync(listAppointmentsNew,listAppointmentsOld,userNum);
 			bool isHashNeeded=true;
 			for(int i = 0;i<listAppointmentsNew.Count;i++) {
 				isHashNeeded=true;
-				//Only rehash existing splits that are already valid
+				//Only rehash existing appointments that are already valid
 				Appointment appointmentOld=listAppointmentsOld.FirstOrDefault(x => listAppointmentsNew[i].AptNum==x.AptNum);
 				if(appointmentOld!=null) {
 					isHashNeeded=IsAppointmentHashValid(appointmentOld);
@@ -3904,6 +3903,7 @@ namespace OpenDentBusiness{
 					listAppointmentsNew[i].SecurityHash=HashFields(listAppointmentsNew[i]);
 				}
 			}
+			bool isChanged=Crud.AppointmentCrud.Sync(listAppointmentsNew,listAppointmentsOld,userNum);
 			if(isChanged) {
 				if(isOpMerge) { //If this is operatory merge the list could be very long.  Just send a generalized, invalid appt signal, this shouldn't happen often anyway.
 					Signalods.SetInvalid(InvalidType.Appointment);
@@ -4864,15 +4864,14 @@ namespace OpenDentBusiness{
 			return timePatternFinal;
 		}
 
-		///<summary>Return the default time pattern for an appointment with no procedures attached using the AppointmentWithoutProcsDefaultLength pref.
-		///Returns "/" if the defaultLength is set to 0. (preserves old behavior). Returned pattern is always in 5 minute increments.</summary>
+		///<summary>Return the default time pattern for an appointment with no procedures attached using the AppointmentWithoutProcsDefaultLength pref. Returns "//////" if the defaultLength is not set. Returned pattern is always in 5 minute increments.</summary>
 		public static string GetApptTimePatternForNoProcs() {
 			Meth.NoCheckMiddleTierRole();
 			int defaultLength=PrefC.GetInt(PrefName.AppointmentWithoutProcsDefaultLength);
 			if(defaultLength > 0) {
 				return new String('/',(defaultLength/5));
 			}
-			return "/";//Preserves old behavior
+			return "//////";
 		}
 
 		///<summary>Returns true if the patient has any broken appointments, future appointments, unscheduled appointments, or unsched planned appointments.  

@@ -9,11 +9,11 @@ using OpenDentBusiness;
 namespace UnitTestsCore {
 	public class InsuranceT {
 		public static InsuranceInfo AddInsurance(Patient pat,string carrierName,string planType="",long feeSchedNum=0,int ordinal=1,bool isMedical=false,
-			EnumCobRule cobRule=EnumCobRule.Basic,long copayFeeSchedNum=0,int monthRenew=0,string subscriberID="1234",
+			EnumCobRule cobRule=EnumCobRule.Basic,long copayFeeSchedNum=0,int monthRenew=0,string subscriberID="1234",long allowedFeeSchedNum=0,
 			ExclusionRule exclusionRule=ExclusionRule.PracticeDefault) 
 		{
 			InsuranceInfo ins=new InsuranceInfo();
-			ins.AddInsurance(pat,carrierName,planType,feeSchedNum,ordinal,isMedical,cobRule,copayFeeSchedNum,monthRenew,subscriberID,exclusionRule);
+			ins.AddInsurance(pat,carrierName,planType,feeSchedNum,ordinal,isMedical,cobRule,copayFeeSchedNum,monthRenew,subscriberID,allowedFeeSchedNum,exclusionRule);
 			return ins;
 		}
 
@@ -89,7 +89,7 @@ namespace UnitTestsCore {
 		}
 
 		public void AddInsurance(Patient pat,string carrierName,string planType="",long feeSchedNum=0,int ordinal=1,bool isMedical=false,
-			EnumCobRule cobRule=EnumCobRule.Basic,long copayFeeSchedNum=0,int monthRenew=0,string subscriberID="1234",
+			EnumCobRule cobRule=EnumCobRule.Basic,long copayFeeSchedNum=0,int monthRenew=0,string subscriberID="1234",long allowedFeeSchedNum=0,
 			ExclusionRule exclusionRule=ExclusionRule.PracticeDefault) 
 		{
 			Carrier carrier=CarrierT.CreateCarrier(carrierName);
@@ -101,6 +101,7 @@ namespace UnitTestsCore {
 			plan.IsMedical=isMedical;
 			plan.CopayFeeSched=copayFeeSchedNum;
 			plan.ExclusionFeeRule=exclusionRule;
+			plan.AllowedFeeSched=allowedFeeSchedNum;
 			InsPlans.Update(plan,planOld);
 			InsSub sub=InsSubT.CreateInsSub(pat.PatNum,plan.PlanNum,subscriberID);
 			PatPlan patPlan=PatPlanT.CreatePatPlan((byte)ordinal,pat.PatNum,sub.InsSubNum);

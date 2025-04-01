@@ -1430,11 +1430,11 @@ namespace OpenDentBusiness {
 			[DataMember(Name="status")]
 			public string IFrameStatus;
 			[DataMember(Name="response")]
-			public iFrameSuccessResponse Response;
+			public iFrameListenerResponse Response;
 		}
 
 		[DataContract]
-		public class iFrameSuccessResponse {
+		public class iFrameListenerResponse {
 			[DataMember(Name="cardToken")]
 			public string CardToken;
 			[DataMember(Name="cardHolder")]
@@ -1464,6 +1464,9 @@ namespace OpenDentBusiness {
 			///<summary>Status - The actual status of the transaction being ran by PayConnect.</summary>
 			[DataMember(Name="status")]
 			public string TransactionStatus;
+			///<summary>ONLOAD and ERROR will provide a message field value.</summary>
+			[DataMember(Name="message")]
+			public string Message;
 		}
 
 		///<summary>https://staging-developer.dentalxchange.com/payment-api#tag/Merchant/operation/merchant-info</summary>

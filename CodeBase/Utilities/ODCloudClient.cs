@@ -1014,7 +1014,7 @@ namespace CodeBase {
 			MessageBox.Show(response);
 		}
 
-		///<summary>Calls the ImportFile or ImportFileMulti method on the CloudClient. Splits the response string received into file name and data. Writes new file(s) to the FileTransferTempPath and returns the list of path strings of the newly written file(s). Returns blank if file was not created for any reason.</summary>
+		///<summary>Calls the ImportFile or ImportFileMulti method on the CloudClient. Splits the response string received into file name and data. Writes new file(s) to the FileTransferTempPath and returns the list of path strings of the newly written file(s). Returns empty list if file(s) were not created for any reason.</summary>
 		public static List<string> ImportFileForCloud(bool isMulti=false) {
 			string serializedImportFile="";
 			try {
@@ -1040,8 +1040,19 @@ namespace CodeBase {
 			}
 			List<string> listImportPaths=new List<string>();
 			List<string> listFailedFileNames=new List<string>();
-			List<CloudImportFile> listCloudImportFiles=JsonConvert.DeserializeObject<List<CloudImportFile>>(serializedImportFile);
-			for(int i=0;i < listCloudImportFiles.Count;i++) {
+			List<CloudImportFile> listCloudImportFiles=new List<CloudImportFile>();
+			try {
+				listCloudImportFiles=JsonConvert.DeserializeObject<List<CloudImportFile>>(serializedImportFile);
+			}
+			catch(Exception ex) {//Using an older version of the OpenDentalCloudClient which returned a list of strings. Deserialize and handle accordingly.
+				ex.DoNothing();
+				List<string> listImportFileStrings=JsonConvert.DeserializeObject<List<string>>(serializedImportFile);
+				if(listImportFileStrings.Count<2) {
+					return new List<string>();
+				}
+				listCloudImportFiles.Add(new CloudImportFile(){FileName=listImportFileStrings[0],DataString=listImportFileStrings[1]});
+			}
+			for(int i=0;i<listCloudImportFiles.Count;i++) {
 				string importPath=ODFileUtils.CombinePaths(GetFileTransferTempPath(),listCloudImportFiles[i].FileName);
 				try {
 					byte[] byteArray=Convert.FromBase64String(listCloudImportFiles[i].DataString);
@@ -1058,6 +1069,27 @@ namespace CodeBase {
 				ODMessageBox.Show($"Error importing file: {string.Join(", ", listFailedFileNames)}.");
 			}
 			return listImportPaths;
+		}
+
+		///<summary>Opens a file/folder dialog on the local workstation using the OpenDentalCloudClient. Defaults to file select, pass true to change to folder select. Receives the selected path as the response.</summary>
+		public static string GetFileFolderPath(bool isFolderPath=false) {
+			string path;
+			ODCloudClientData oDCloudClientData=new ODCloudClientData();
+			oDCloudClientData.OtherData="file";//Pass selection type to determine what type of dialog to open on the local workstation.
+			if(isFolderPath) {
+				oDCloudClientData.OtherData="folder";
+			}
+			try {
+				path=SendToODCloudClientSynchronously(oDCloudClientData,CloudClientAction.GetFileFolderPath,timeoutSecs:120);
+			}
+			catch(Exception ex) {
+				ex.DoNothing();
+				if(ex.Message.Contains("Unknown Action: ")) {
+					ODMessageBox.Show("File browsing not allowed in web mode.");
+				}
+				return "";
+			}
+			return path;
 		}
 
 		///<summary>Contains the data to be sent to the browser to perfrom a browser action. Will be serialized as JSON.</summary>
@@ -1298,6 +1330,8 @@ namespace CodeBase {
 			GetDbNameOrUriFromClipboard,
 			///<summary>Imports multiple files from the user's workstation</summary>
 			ImportFileMulti,
+			///<summary>Opens file/folder dialog on the user's side and allows them to select a file/folder path</summary>
+			GetFileFolderPath,
 		}
 
 		///<summary>Tells the browser what action to take with the data passed to it.</summary>

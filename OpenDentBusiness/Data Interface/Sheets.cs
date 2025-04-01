@@ -416,6 +416,13 @@ namespace OpenDentBusiness{
 			sheetNew.PatNum=sheet.PatNum;
 			//Only setting the PatNum sheet parameter was what the Add button was doing from the "Patient Forms and Medical Histories" window.
 			SheetParameter.SetParameter(sheetNew,"PatNum",sheet.PatNum);
+			if(SheetDefs.ContainsGrids(sheetDefOriginal,"ProcsWithFee","ProcsNoFee")) {
+				//ListProcNums is set in FormSheetProcSelect and holds the needed ProcNums to fill these grids.
+				SheetParameter sheetParameter=sheet.Parameters.Find(x => x.ParamName=="ListProcNums");
+				if(sheetParameter!=null) {
+					SheetParameter.SetParameter(sheetNew,"ListProcNums",sheetParameter.ParamValue);
+				}
+			}
 			//Fill the fields with the most recent values from the non-sheet related tables in database.
 			SheetFiller.FillFields(sheetNew);
 			if(sheet.SheetFields.IsNullOrEmpty()) {

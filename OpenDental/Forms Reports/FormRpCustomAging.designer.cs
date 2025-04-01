@@ -62,7 +62,7 @@ namespace OpenDental {
 			this.radio60 = new System.Windows.Forms.RadioButton();
 			this.radioAny = new System.Windows.Forms.RadioButton();
 			this.groupBox1 = new OpenDental.UI.GroupBox();
-			this.checkAgePayPlanCredits = new OpenDental.UI.CheckBox();
+			this.checkAgePayPlanProduction = new OpenDental.UI.CheckBox();
 			this.checkAgeWriteoffEsts = new OpenDental.UI.CheckBox();
 			this.checkAgeProcedures = new OpenDental.UI.CheckBox();
 			this.checkAgePayPlanCharges = new OpenDental.UI.CheckBox();
@@ -445,7 +445,7 @@ namespace OpenDental {
 			// groupBox1
 			// 
 			this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.groupBox1.Controls.Add(this.checkAgePayPlanCredits);
+			this.groupBox1.Controls.Add(this.checkAgePayPlanProduction);
 			this.groupBox1.Controls.Add(this.checkAgeWriteoffEsts);
 			this.groupBox1.Controls.Add(this.checkAgeProcedures);
 			this.groupBox1.Controls.Add(this.checkAgePayPlanCharges);
@@ -460,15 +460,15 @@ namespace OpenDental {
 			this.groupBox1.TabIndex = 99;
 			this.groupBox1.Text = "Include the following:";
 			// 
-			// checkAgePayPlanCredits
+			// checkAgePayPlanProduction
 			// 
-			this.checkAgePayPlanCredits.Checked = true;
-			this.checkAgePayPlanCredits.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.checkAgePayPlanCredits.Location = new System.Drawing.Point(6, 91);
-			this.checkAgePayPlanCredits.Name = "checkAgePayPlanCredits";
-			this.checkAgePayPlanCredits.Size = new System.Drawing.Size(145, 18);
-			this.checkAgePayPlanCredits.TabIndex = 18;
-			this.checkAgePayPlanCredits.Text = "Pay Plan Credits";
+			this.checkAgePayPlanProduction.Checked = true;
+			this.checkAgePayPlanProduction.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.checkAgePayPlanProduction.Location = new System.Drawing.Point(6, 91);
+			this.checkAgePayPlanProduction.Name = "checkAgePayPlanProduction";
+			this.checkAgePayPlanProduction.Size = new System.Drawing.Size(145, 18);
+			this.checkAgePayPlanProduction.TabIndex = 18;
+			this.checkAgePayPlanProduction.Text = "Pay Plan Production";
 			// 
 			// checkAgeWriteoffEsts
 			// 
@@ -634,7 +634,7 @@ namespace OpenDental {
 		private System.Windows.Forms.RadioButton radio60;
 		private System.Windows.Forms.RadioButton radioAny;
 		private OpenDental.UI.GroupBox groupBox1;
-		private OpenDental.UI.CheckBox checkAgePayPlanCredits;
+		private OpenDental.UI.CheckBox checkAgePayPlanProduction;
 		private OpenDental.UI.CheckBox checkAgeWriteoffEsts;
 		private OpenDental.UI.CheckBox checkAgeProcedures;
 		private OpenDental.UI.CheckBox checkAgePayPlanCharges;

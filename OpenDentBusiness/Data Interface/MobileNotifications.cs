@@ -26,7 +26,8 @@ namespace OpenDentBusiness {
 			string command="SELECT * FROM mobilenotification WHERE DateTimeEntry>="+POut.DateT(dateTimeLastPoll)
 				+" AND DateTimeExpires>"+POut.DateT(DateTime_.Now)
 				+" AND DeviceId='"+POut.String(deviceId)+"'"
-				+" AND AppTarget='"+POut.Enum<EnumAppTarget>(enumAppTarget)+"'";
+				+" AND AppTarget='"+POut.Enum<EnumAppTarget>(enumAppTarget)+"'"
+				+" ORDER BY DateTimeEntry ASC";
 			List<MobileNotification> listMobileNotifications=Crud.MobileNotificationCrud.SelectMany(command);
 			if(!listMobileNotifications.IsNullOrEmpty() && Logger.DoVerboseLogging!=null && Logger.DoVerboseLogging()) {
 				string logText=GenerateRetrieveLogText(listMobileNotifications);

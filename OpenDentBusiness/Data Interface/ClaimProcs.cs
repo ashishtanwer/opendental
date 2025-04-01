@@ -1976,7 +1976,7 @@ namespace OpenDentBusiness{
 					codeSubstNone,insPlan.PlanType,toothNum,procedure.ProvNum,procedure.ClinicNum,insPlan.PlanNum,listSubstitutionLinks,lookupFees);//lookupFees can be null
 				}
 				if(carrierAllowed==-1) {//Fee not found in feesched
-					if(PrefC.GetBool(PrefName.InsOutOfNetworkBlankLikeZero)) {
+					if(PrefC.GetBool(PrefName.InsOutOfNetworkBlankLikeZero) && insPlan.AllowedFeeSched!=0) {
 						allowed=0;
 						claimProc.BaseEst=0;
 						claimProc.InsEstTotal=0;

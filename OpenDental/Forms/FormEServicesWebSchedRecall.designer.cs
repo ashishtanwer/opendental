@@ -91,7 +91,7 @@ namespace OpenDental{
 			// butSave
 			// 
 			this.butSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.butSave.Location = new System.Drawing.Point(959, 644);
+			this.butSave.Location = new System.Drawing.Point(957, 678);
 			this.butSave.Name = "butSave";
 			this.butSave.Size = new System.Drawing.Size(75, 24);
 			this.butSave.TabIndex = 3;
@@ -221,8 +221,6 @@ namespace OpenDental{
 			// 
 			// groupWebSchedText
 			// 
-			this.groupWebSchedText.Controls.Add(this.labelWebSchedPerBatch);
-			this.groupWebSchedText.Controls.Add(this.textWebSchedPerBatch);
 			this.groupWebSchedText.Controls.Add(this.radioDoNotSendText);
 			this.groupWebSchedText.Controls.Add(this.radioSendText);
 			this.groupWebSchedText.Location = new System.Drawing.Point(457, 447);
@@ -233,16 +231,16 @@ namespace OpenDental{
 			// 
 			// labelWebSchedPerBatch
 			// 
-			this.labelWebSchedPerBatch.Location = new System.Drawing.Point(357, 24);
+			this.labelWebSchedPerBatch.Location = new System.Drawing.Point(31, 118);
 			this.labelWebSchedPerBatch.Name = "labelWebSchedPerBatch";
-			this.labelWebSchedPerBatch.Size = new System.Drawing.Size(156, 32);
+			this.labelWebSchedPerBatch.Size = new System.Drawing.Size(342, 19);
 			this.labelWebSchedPerBatch.TabIndex = 314;
-			this.labelWebSchedPerBatch.Text = "Max number of texts sent every 10 minutes per clinic";
+			this.labelWebSchedPerBatch.Text = "Max number of recalls sent every 10 minutes per clinic";
 			this.labelWebSchedPerBatch.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
 			// textWebSchedPerBatch
 			// 
-			this.textWebSchedPerBatch.Location = new System.Drawing.Point(515, 36);
+			this.textWebSchedPerBatch.Location = new System.Drawing.Point(379, 118);
 			this.textWebSchedPerBatch.MaxVal = 100000000;
 			this.textWebSchedPerBatch.MinVal = 1;
 			this.textWebSchedPerBatch.Name = "textWebSchedPerBatch";
@@ -598,7 +596,7 @@ namespace OpenDental{
 			this.groupCustomizedMessages.Controls.Add(this.butRecallSchedSetup);
 			this.groupCustomizedMessages.Location = new System.Drawing.Point(457, 521);
 			this.groupCustomizedMessages.Name = "groupCustomizedMessages";
-			this.groupCustomizedMessages.Size = new System.Drawing.Size(575, 117);
+			this.groupCustomizedMessages.Size = new System.Drawing.Size(575, 149);
 			this.groupCustomizedMessages.TabIndex = 409;
 			this.groupCustomizedMessages.Text = "Customized Messages";
 			// 
@@ -613,7 +611,9 @@ namespace OpenDental{
 			// 
 			// groupOtherSettings
 			// 
+			this.groupOtherSettings.Controls.Add(this.labelWebSchedPerBatch);
 			this.groupOtherSettings.Controls.Add(this.textNumMonthsCheck);
+			this.groupOtherSettings.Controls.Add(this.textWebSchedPerBatch);
 			this.groupOtherSettings.Controls.Add(this.labelNumMonthsCheck);
 			this.groupOtherSettings.Controls.Add(this.comboWSRConfirmStatus);
 			this.groupOtherSettings.Controls.Add(this.labelRecallConfirmStatus);
@@ -623,7 +623,7 @@ namespace OpenDental{
 			this.groupOtherSettings.Controls.Add(this.checkRecallAllowProvSelection);
 			this.groupOtherSettings.Location = new System.Drawing.Point(11, 521);
 			this.groupOtherSettings.Name = "groupOtherSettings";
-			this.groupOtherSettings.Size = new System.Drawing.Size(439, 117);
+			this.groupOtherSettings.Size = new System.Drawing.Size(439, 149);
 			this.groupOtherSettings.TabIndex = 410;
 			this.groupOtherSettings.Text = "Other Settings";
 			// 
@@ -647,7 +647,7 @@ namespace OpenDental{
 			// 
 			// FormEServicesWebSchedRecall
 			// 
-			this.ClientSize = new System.Drawing.Size(1046, 680);
+			this.ClientSize = new System.Drawing.Size(1044, 714);
 			this.Controls.Add(this.groupOtherSettings);
 			this.Controls.Add(this.groupCustomizedMessages);
 			this.Controls.Add(this.butEditRecallTypes);
@@ -666,7 +666,6 @@ namespace OpenDental{
 			this.Load += new System.EventHandler(this.FormEServicesWebSchedRecall_Load);
 			this.groupWebSchedProvRule.ResumeLayout(false);
 			this.groupWebSchedText.ResumeLayout(false);
-			this.groupWebSchedText.PerformLayout();
 			this.groupBox6.ResumeLayout(false);
 			this.groupBoxWebSchedAutomation.ResumeLayout(false);
 			this.groupWebSchedPreview.ResumeLayout(false);

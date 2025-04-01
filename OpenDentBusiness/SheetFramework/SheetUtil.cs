@@ -677,8 +677,10 @@ namespace OpenDentBusiness{
 				boundsCur.Height+=amountOfGrowth+1;//Add 1 to the height because Rectangle.IntersectsWith() does not include when the the boundaries touch but do not overlap.
 				affectedFields.AddRange(sheet.SheetFields.Where(field => field!=sheetField 
 					&& sheetField.YPos<field.YPos
-					&& field.FieldType!=SheetFieldType.Drawing 
-					&& field.Bounds.IntersectsWith(boundsCur) 
+					&& field.FieldType!=SheetFieldType.Drawing
+					//B60166 When a number field is next to paragraph field, they need to move down together.
+					//Simply checking for matching YPos accomplishes this. A better fix would be far too complex.
+					&& (field.Bounds.IntersectsWith(boundsCur) || affectedFields.Exists((x) => x.YPos==field.YPos))
 					&& !affectedFields.Contains(field)));
 			}
 			affectedFields.ForEach(field => field.YPos+=amountOfGrowth);

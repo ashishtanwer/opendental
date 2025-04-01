@@ -629,6 +629,25 @@ namespace WpfControls {
 					if(Programs.IsEnabled(ProgramName.Pearl)) {
 						toolBarButton.SetToolTipText("Send currently displayed image(s) to Pearl");
 					}
+					else {
+						//Only show dropdown when not enabled
+						ContextMenu contextMenu=new ContextMenu();
+						MenuItem menuItem=new MenuItem();
+						menuItem.Text=Lans.g("Pearl","Disable Advertising");
+						menuItem.Click+=(s,e) => {
+							List<ProgramProperty> listProgProps=ProgramProperties.GetForProgram(program.ProgramNum);
+							for(int i=0;i<listProgProps.Count;i++){
+								if(listProgProps[i].PropertyDesc=="Disable Advertising"){ 
+									listProgProps[i].PropertyValue=POut.Bool(true);
+								}
+							}
+							ProgramProperties.Sync(listProgProps,program.ProgramNum);
+							DataValid.SetInvalid(InvalidType.Programs, InvalidType.ToolButsAndMounts);
+						};
+						contextMenu.Add(menuItem);
+						toolBarButton.ToolBarButtonStyle=ToolBarButtonStyle.DropDownButton;
+						toolBarButton.ContextMenuDropDown=contextMenu;
+					}
 				}
 				if(toolBarsAvail!=EnumToolBar.MainToolbar) {
 					toolBar.AddSeparator();

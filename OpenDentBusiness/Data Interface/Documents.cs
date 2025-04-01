@@ -437,8 +437,16 @@ namespace OpenDentBusiness {
 			if(bitmapFullSize is null){
 				return NoAvailablePhoto();
 			}
-			Bitmap bitmapThumb=ImageHelper.GetBitmapSquare(bitmapFullSize,100);//Thumbnails saved in the thumbnails folder are always 100x100
-			bitmapFullSize?.Dispose();
+			Bitmap bitmapThumb;
+			try {// Because each thumbnail is loaded on a background worker thread and not awaited, GetImageCropped() can use a lot of memory when loading large images which will cause this to throw "Out of memory".
+				bitmapThumb=ImageHelper.GetBitmapSquare(bitmapFullSize,100);//Thumbnails saved in the thumbnails folder are always 100x100
+			}
+			catch(Exception) {
+				return NoAvailablePhoto();
+			}
+			finally {
+				bitmapFullSize?.Dispose();
+			}
 			if(PrefC.AtoZfolderUsed==DataStorageType.LocalAtoZ) {//Only save thumbnail to local directory if using local AtoZ
 				try {
 					bitmapThumb.Save(fileNameThumb);

@@ -429,7 +429,7 @@ namespace OpenDental {
 						return;
 					}
 					else if(response.ResponseType==PayConnect2.ResponseType.IFrame && !response.iFrameResponse.Response.CardToken.IsNullOrEmpty()) {
-						PayConnect2.iFrameSuccessResponse cardData=response.iFrameResponse.Response;
+						PayConnect2.iFrameListenerResponse cardData=response.iFrameResponse.Response;
 						CreditCard newCreditCard=new CreditCard();
 						newCreditCard.IsNew=true;
 						newCreditCard.PatNum=_patient.PatNum;

@@ -14,9 +14,11 @@ namespace OpenDental {
 	/// </summary>
 	public partial class FormMedications : FormODBase {
 		///<summary></summary>
+		private bool _isLoading=true;
 		public bool IsSelectionMode;
 		///<summary>the number returned if using select mode.</summary>
 		public long SelectedMedicationNum;
+		private Timer _timer=new Timer();
 
 		///<summary>Set isAll to true to start in the All Medications tab, or false to start in the Meds In Use tab.</summary>
 		public FormMedications() {
@@ -41,6 +43,9 @@ namespace OpenDental {
 			else{
 				butOK.Visible=false;
 			}
+			_timer.Interval=500;
+			_timer.Tick+=_timer_Tick;
+			_isLoading=false;
 		}
 
 		///<summary>Forces cursor to start in the search textbox.</summary>
@@ -49,6 +54,14 @@ namespace OpenDental {
 		}
 
 		private void tabMedications_SelectedIndexChanged(object sender,EventArgs e) {
+			if(_isLoading) {
+				return;
+			}
+			FillTab();
+		}
+
+		private void _timer_Tick(object sender,EventArgs e) {
+			_timer.Stop();
 			FillTab();
 		}
 
@@ -334,7 +347,8 @@ namespace OpenDental {
 		}
 		
 		private void textSearch_TextChanged(object sender,EventArgs e) {
-			FillTab();
+			_timer.Stop();
+			_timer.Start();
 		}
 
 		private void gridAllMedications_CellClick(object sender,ODGridClickEventArgs e) {

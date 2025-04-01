@@ -1238,6 +1238,15 @@ namespace OpenDental.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calls made by this application to a remote software application owned by a third party, Pearl, Inc., using Pearl’s proprietary API are made under license provided by and owned by Pearl, Inc.; all rights reserved..
+        /// </summary>
+        public static string Pearl {
+            get {
+                return ResourceManager.GetString("Pearl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         public static byte[] Pen {

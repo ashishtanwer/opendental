@@ -250,6 +250,7 @@ namespace OpenDental {
 			this.textDate.Name = "textDate";
 			this.textDate.Size = new System.Drawing.Size(85, 20);
 			this.textDate.TabIndex = 0;
+			this.textDate.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
 			// 
 			// butChangeGuar
 			// 
@@ -379,6 +380,7 @@ namespace OpenDental {
 			this.radioTpTreatAsComplete.TabStop = true;
 			this.radioTpTreatAsComplete.Text = "Treat procedure as complete";
 			this.radioTpTreatAsComplete.UseVisualStyleBackColor = true;
+			this.radioTpTreatAsComplete.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// radioTpAwaitComplete
 			// 
@@ -389,6 +391,7 @@ namespace OpenDental {
 			this.radioTpAwaitComplete.TabStop = true;
 			this.radioTpAwaitComplete.Text = "Await procedure completion";
 			this.radioTpAwaitComplete.UseVisualStyleBackColor = true;
+			this.radioTpAwaitComplete.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// labelDateInterestStart
 			// 
@@ -500,6 +503,7 @@ namespace OpenDental {
 			this.radioQuarterly.TabStop = true;
 			this.radioQuarterly.Text = "Quarterly";
 			this.radioQuarterly.UseVisualStyleBackColor = true;
+			this.radioQuarterly.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// radioMonthly
 			// 
@@ -511,6 +515,7 @@ namespace OpenDental {
 			this.radioMonthly.TabStop = true;
 			this.radioMonthly.Text = "Monthly";
 			this.radioMonthly.UseVisualStyleBackColor = true;
+			this.radioMonthly.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// radioOrdinalWeekday
 			// 
@@ -521,6 +526,7 @@ namespace OpenDental {
 			this.radioOrdinalWeekday.TabStop = true;
 			this.radioOrdinalWeekday.Text = "Specific day of month";
 			this.radioOrdinalWeekday.UseVisualStyleBackColor = true;
+			this.radioOrdinalWeekday.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// radioEveryOtherWeek
 			// 
@@ -531,6 +537,7 @@ namespace OpenDental {
 			this.radioEveryOtherWeek.TabStop = true;
 			this.radioEveryOtherWeek.Text = "Every other week";
 			this.radioEveryOtherWeek.UseVisualStyleBackColor = true;
+			this.radioEveryOtherWeek.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// radioWeekly
 			// 
@@ -541,6 +548,7 @@ namespace OpenDental {
 			this.radioWeekly.TabStop = true;
 			this.radioWeekly.Text = "Weekly";
 			this.radioWeekly.UseVisualStyleBackColor = true;
+			this.radioWeekly.Click += new System.EventHandler(this.Radio_Click);
 			// 
 			// butSaveTerms
 			// 
@@ -578,6 +586,7 @@ namespace OpenDental {
 			this.textAPR.Size = new System.Drawing.Size(47, 20);
 			this.textAPR.TabIndex = 4;
 			this.textAPR.TextChanged += new System.EventHandler(this.TextAPR_TextChanged);
+			this.textAPR.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
 			// 
 			// textDownPayment
 			// 
@@ -587,6 +596,7 @@ namespace OpenDental {
 			this.textDownPayment.Name = "textDownPayment";
 			this.textDownPayment.Size = new System.Drawing.Size(85, 20);
 			this.textDownPayment.TabIndex = 3;
+			this.textDownPayment.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
 			// 
 			// label11
 			// 
@@ -612,6 +622,7 @@ namespace OpenDental {
 			this.textDateFirstPay.Name = "textDateFirstPay";
 			this.textDateFirstPay.Size = new System.Drawing.Size(85, 20);
 			this.textDateFirstPay.TabIndex = 2;
+			this.textDateFirstPay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
 			// 
 			// label5
 			// 
@@ -640,6 +651,7 @@ namespace OpenDental {
 			this.textTotalPrincipal.ReadOnly = true;
 			this.textTotalPrincipal.Size = new System.Drawing.Size(85, 20);
 			this.textTotalPrincipal.TabIndex = 1;
+			this.textTotalPrincipal.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TextBox_KeyPress);
 			this.textTotalPrincipal.Validating += new System.ComponentModel.CancelEventHandler(this.textAmount_Validating);
 			// 
 			// butCreateSched

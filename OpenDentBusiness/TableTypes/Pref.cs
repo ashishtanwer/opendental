@@ -57,6 +57,7 @@ namespace OpenDentBusiness {
 		[PrefName(ValueType=PrefValueType.BOOL),Obsolete("This preference has been deprecated. Do not use.",true)]
 		AccountShowTrojanExpressCollect,
 		ADAComplianceDateTime,
+		/// <summary>Boolean. </summary>
 		ADAdescriptionsReset,
 		///<summary>Boolean, true by default.  When set to true and a new family member is added, the new patient's email will be autofilled with the 
 		///guarantor's email.</summary>
@@ -143,7 +144,7 @@ namespace OpenDentBusiness {
 		AppointmentTypeShowPrompt,
 		///<summary>Controls whether or not a warning will be displayed when selecting an appointment type would detach procedures from an appointment..</summary>
 		AppointmentTypeShowWarning,
-		///<summary>Integer in minutes.  Defaults to 30.  The defualt length of an appointment that is created without attaching any procedures.</summary>
+		///<summary>Integer in minutes.  If empty, it uses 30.  The default length of an appointment that is created without attaching any procedures. Enforced to be at least 5.</summary>
 		AppointmentWithoutProcsDefaultLength,
 		///<summary>Boolean defauts to true.  If true, users can set appointments without procedures complete.</summary>
 		ApptAllowEmptyComplete,
@@ -580,7 +581,7 @@ namespace OpenDentBusiness {
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ChildDaycare,
 		ClaimAttachExportPath,
-		///<summary>If true, we will require claims to not have any missing data before they can be created/edited.</summary>
+		///<summary>If true, we will require claims to not have any missing data before they can be created.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		ClaimEditRequireNoMissingData,
 		///<summary>If true, we will display the Patient Repsonsibility in the claim edit and claim payment windows.</summary>
@@ -1729,6 +1730,7 @@ namespace OpenDentBusiness {
 		///<summary>Boolean. True by default. If false, allows the payment plan window to not require the full lock box to be checked before saving.</summary>
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		PayPlanRequireLockForAPR,
+		/// <summary>When doing billing or printing statements, this is the number of days in advance to consider pay plan charges. Cannot be used with Dynamic Payment Plans.</summary>
 		PayPlansBillInAdvanceDays,
 		[PrefName(ValueType=PrefValueType.BOOL)]
 		///<summary>Boolean. False by default. If true, payment plans will use the date of production as the Date Showing. If false, payment plans use the payplanlink.SecDateTEntry as the date showing. That field is not editable and is the date that the user attached the proc to the pp. In the normal scenario of adding procs at the same time as pp creation, this is effectively the pp date. This also handles the scenario where you have a long-running pp and periodically add procedures to it. If we get complaints, we might add this as a date field that users can control.</summary>
@@ -2612,7 +2614,7 @@ namespace OpenDentBusiness {
 		WebSchedMessageText2,
 		WebSchedMessage3,
 		WebSchedMessageText3,
-		///<summary>The number of text messages sent automatically per batch. Currently one batch runs every 10 minutes.</summary>
+		///<summary>The number of text messages or emails sent automatically per batch. Currently one batch runs every 10 minutes. The pref is being used for both types of messages but a name change was deemed unnecessary per job 60116.</summary>
 		WebSchedTextsPerBatch,
 		///<summary>Determines whether or not the birthdate of the Web Sched New Patient gets validated for being 18 years or older.</summary>
 		WebSchedNewPatAllowChildren,

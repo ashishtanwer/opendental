@@ -776,6 +776,7 @@ namespace OpenDentBusiness {
 				else if(field.FieldName=="Patient Info.gif") {
 					bmpOriginal=OpenDentBusiness.Properties.Resources.Patient_Info;
 					bmpOriginalFormat=ImageFormat.Gif;
+					filePathAndName="";//No actual image file saved anywhere. This is an internal image.
 				}
 				else if(CloudStorage.IsCloudStorage) {
 					string folder=SheetUtil.GetImagePath();
@@ -864,7 +865,7 @@ namespace OpenDentBusiness {
 			}
 			else {
 				MemoryStream ms=null;
-				ImageHelper.GetBitmapPDF(filePathAndName,ms);
+				bmpOriginal=ImageHelper.GetBitmapPDF(bmpOriginal,bmpOriginalFormat,ms);
 				XImage xI=XImage.FromGdiPlusImage(bmpOriginal);
 				gx.DrawImage(xI,p(field.XPos+adjustX),p(field.YPos-_yPosPrint+adjustY),p(imgDrawWidth),p(imgDrawHeight));
 				xI.Dispose();

@@ -215,7 +215,10 @@ namespace UnitTests.Documentation{
 		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesThreeWithOTSecondRatesOneNoOT=191,
 		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesTwoThreeWithOTSecondRatesOneWithOT=192,
 		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeWithOTSecondRatesOneWithOT=193,
-		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeWithOTSecondRatesOneNoOT=194
+		ClockEvents_GetTimeCardManage_TwoWeeksFirstRatesOneTwoThreeWithOTSecondRatesOneNoOT=194,
+		AgingData_GetAgingData_IncomeTransferUnearnedToProcedure=239,
+		//ClaimProcs_TransferClaimsAsTotalToProcedures_MultipleProcsAndProvsTransferCorrectly=240,
+		AgingData_GetAgingData_NegativePaymentPartialRefund=241,
 		//Add new items to enum here at end of list
 	}
 }

@@ -1111,7 +1111,7 @@ namespace OpenDentBusiness {
 					DataTable tableBals=Ledgers.GetDateBalanceBegan(listPatAgings,isSuperBills:false);//More Options selection has a super family option. We would need new checkbox here.
 					if(tableBals.Rows.Count>0) {
 						DateTime dateTimeFrom=PIn.Date(tableBals.Rows[0]["DateZeroBal"].ToString());
-						if(dateTimeFrom>statement.DateRangeFrom) {//Zero balance date range has precedence if it's more recent than billing default date range.
+						if(dateTimeFrom.Year>1880) {//Matches logic in BillingL.CreateStatementHelper() that uses zero balance date if pref is enabled and date is more recent than 1880.
 							statement.DateRangeFrom=dateTimeFrom;
 						}
 					}

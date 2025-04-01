@@ -31,11 +31,11 @@ namespace OpenDental {
 			}
 			if(PrefC.GetInt(PrefName.PayPlansVersion) == (int)PayPlanVersions.AgeCreditsAndDebits) {
 				checkAgePayPlanCharges.Checked=true;
-				checkAgePayPlanCredits.Checked=true;
+				checkAgePayPlanProduction.Checked=true;
 			}
 			else {//both Traditional and AgedCreditsOnly only age credits.
 				checkAgePayPlanCharges.Checked=false;
-				checkAgePayPlanCredits.Checked=true;
+				checkAgePayPlanProduction.Checked=true;
 			}
 			FillClinics();
 			FillProvs();
@@ -148,7 +148,7 @@ namespace OpenDental {
 			if(checkAgePayPlanCharges.Checked) {
 				agingInclude |= AgingOptions.AgingInclude.PayPlanCharges;
 			}
-			if(checkAgePayPlanCredits.Checked) {
+			if(checkAgePayPlanProduction.Checked) {
 				agingInclude |= AgingOptions.AgingInclude.PayPlanCredits;
 			}
 			if(checkAgePatPayments.Checked) {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using CodeBase;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenDentBusiness;
 using UnitTestsCore;
@@ -527,6 +528,186 @@ namespace UnitTests.AgingData_Tests {
 			Assert.AreEqual(listPatAging.Count,2);
 			Assert.IsTrue(listPatAging[0].DateLastStatement>=dateTimeSinceDate);
 			Assert.IsTrue(listPatAging[1].DateLastStatement>=dateTimeSinceDate);
+		}
+
+		[TestMethod]
+		[Documentation.Numbering(Documentation.EnumTestNum.AgingData_GetAgingData_IncomeTransferUnearnedToProcedure)]
+		[Documentation.VersionAdded("24.4")]
+		[Documentation.Description(@"A procedure for $1,000 that was completed one year ago should yield $1,000 in the 'over 90' aging bucket. A $100 payment made to unearned 11 months ago that is eventually transferred to the procedure via an income transfer should cause the 'over 90' aging bucket to yield $900. The negative and positive payment splits associated with the income transfer should not impact the aging buckets.
+<table>
+  <tr>
+    <th colspan=""5"">Patient Account</th>
+  </tr>
+  <tr>
+    <th>Date</th>
+    <th>Description</th>
+    <th>Charges</th>
+    <th>Credits</th>
+    <th>Balance</th>
+  </tr>
+  <tr>
+    <td>02/18/2024</td>
+    <td>Procedure</td>
+    <td>1,000</td>
+    <td></td>
+    <td>1,000</td>
+  </tr>
+  <tr>
+    <td>03/18/2024</td>
+    <td>Payment (unearned)</td>
+    <td></td>
+    <td>100</td>
+    <td>900</td>
+  </tr>
+  <tr>
+    <td>02/24/2025</td>
+    <td>Income Transfer (from unearned)</td>
+    <td></td>
+    <td>-100</td>
+    <td>1,000</td>
+  </tr>
+  <tr>
+    <td>02/24/2025</td>
+    <td>Income Transfer (to procedure)</td>
+    <td></td>
+    <td>100</td>
+    <td>900</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan=""4"">Family Aging</th>
+  </tr>
+  <tr>
+    <th>0-30</th>
+    <th>31-60</th>
+    <th>61-90</th>
+    <th>over 90</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>900</td>
+  </tr>
+</table>")]
+		public void AgingData_GetAgingData_IncomeTransferUnearnedToProcedure() {
+			//Income transfer payments that transfer unearned income directly to old production should not impact aging buckets.
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(suffix);
+			long provNum=ProviderT.CreateProvider(suffix);
+			//Create a completed procedure that was due a year ago (over 90) bucket.
+			DateTime procDate=DateTime.Today.AddYears(-1);
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"ITUTP",ProcStat.C,"",1000,procDate,provNum:provNum);
+			//Create an unearned payment directly to unearned for less than the procedure value dated 11 months ago.
+			long unearnedType=PrefC.GetLong(PrefName.PrepaymentUnearnedType);
+			PaymentT.MakePayment(patient.PatNum,100,payDate:DateTime.Today.AddMonths(-11),unearnedType:unearnedType);
+			//Execute an income transfer dated today so that the $100 in unearned is allocated to the procedure.
+			PaymentEdit.IncomeTransferData incomeTransferData=PaymentT.BalanceAndIncomeTransfer(patient.PatNum);
+			PaySplits.InsertMany(incomeTransferData.ListSplitsCur);
+			//Compute aging and assert that the aging buckets yield desirable results.
+			Ledgers.ComputeAging(patient.Guarantor,DateTime.Today);
+			List<PatAging> listPatAgingSimple=Patients.GetAgingListSimple(null,ListTools.FromSingle(patient.Guarantor));
+			Assert.AreEqual(1,listPatAgingSimple.Count);
+			Assert.AreEqual(1,listPatAgingSimple.Count(x => x.BalTotal==900
+				&& x.Bal_0_30==0
+				&& x.Bal_31_60==0
+				&& x.Bal_61_90==0
+				&& x.BalOver90==900));
+		}
+
+		[TestMethod]
+		[Documentation.Numbering(Documentation.EnumTestNum.AgingData_GetAgingData_NegativePaymentPartialRefund)]
+		[Documentation.VersionAdded("24.4")]
+		[Documentation.Description(@"A procedure for $100 that was completed one year ago should yield $100 in the 'over 90' aging bucket. A $100 payment made to the procedure 11 months ago should cause the 'over 90' aging bucket to yield $0. A negative payment of ($50) made today, in order to partially refund the payment, should cause the 'over 90' to yield $50.
+<table>
+  <tr>
+    <th colspan=""5"">Patient Account</th>
+  </tr>
+  <tr>
+    <th>Date</th>
+    <th>Description</th>
+    <th>Charges</th>
+    <th>Credits</th>
+    <th>Balance</th>
+  </tr>
+  <tr>
+    <td>02/18/2024</td>
+    <td>Procedure</td>
+    <td>100</td>
+    <td></td>
+    <td>100</td>
+  </tr>
+  <tr>
+    <td>03/18/2024</td>
+    <td>Payment</td>
+    <td></td>
+    <td>100</td>
+    <td>0</td>
+  </tr>
+  <tr>
+    <td>02/24/2025</td>
+    <td>Partial Refund</td>
+    <td></td>
+    <td>-50</td>
+    <td>50</td>
+  </tr>
+</table>
+<table>
+  <tr>
+    <th colspan=""4"">Family Aging</th>
+  </tr>
+  <tr>
+    <th>0-30</th>
+    <th>31-60</th>
+    <th>61-90</th>
+    <th>over 90</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>50</td>
+  </tr>
+</table>
+Arguably, we could have placed the partial refund in the 0-30 aging bucket. 
+But since the patient still owes money for the procedure from a year ago, the over 90 aging makes the most sense.
+Also, none of these aging decisions affect any financial reports because those never allow backdating.")]
+		//2025-02-26-Nathan was pushing for aging refunds (negative payments) in the 0-30 bucket.
+		//But he couldn't think of any actual scenario where that would be needed.
+		public void AgingData_GetAgingData_NegativePaymentPartialRefund() {
+			//Old aging logic would age negative payments as if they were production.
+			//Thus, a partial refund payment of ($50) dated today made to refund part of a payment from 11 months ago would cause aging to look like this:
+			/******************************************************
+			 * 0-30    =  50.00  =>  used date on negative payment
+			 * 31-60   =   0.00
+			 * 61-90   =   0.00
+			 * over 90 =   0.00
+			 ******************************************************/
+			//New aging logic does not age negative payments and instead ages via the date on outstanding production.
+			//Thus, a refund payment of ($50) dated today made to refund part of a payment from 11 months ago causes aging to look like this:
+			/******************************************************
+			 * 0-30    =   0.00
+			 * 31-60   =   0.00
+			 * 61-90   =   0.00
+			 * over 90 =  50.00  =>  uses date on procedure
+			 ******************************************************/
+			string suffix=MethodBase.GetCurrentMethod().Name;
+			Patient patient=PatientT.CreatePatient(suffix);
+			//Create a completed procedure that was due a year ago (over 90) bucket.
+			Procedure procedure=ProcedureT.CreateProcedure(patient,"NPPR1",ProcStat.C,"",100,procDate:DateTime.Today.AddYears(-1));
+			//Create a payment for the completed procedure dated 11 months ago.
+			PaymentT.MakePayment(patient.PatNum,100,payDate:DateTime.Today.AddMonths(-11),procNum:procedure.ProcNum);
+			//Refund part the payment today and assert that the outstanding balanced is aged via the date on the procedure instead of the date of this negative payment.
+			PaymentT.MakePayment(patient.PatNum,-50,payDate:DateTime.Today,procNum:procedure.ProcNum);
+			Ledgers.ComputeAging(patient.Guarantor,DateTime.Today);
+			List<PatAging> listPatAgingSimple=Patients.GetAgingListSimple(null,ListTools.FromSingle(patient.Guarantor));
+			Assert.AreEqual(1,listPatAgingSimple.Count);
+			Assert.AreEqual(1,listPatAgingSimple.Count(x => x.BalTotal==50
+				&& x.Bal_0_30==0
+				&& x.Bal_31_60==0
+				&& x.Bal_61_90==0
+				&& x.BalOver90==50));
 		}
 	}
 }

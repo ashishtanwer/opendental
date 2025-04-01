@@ -31,7 +31,7 @@ namespace OpenDental{
 			this.butReplacements = new OpenDental.UI.Button();
 			this.butSave = new OpenDental.UI.Button();
 			this.textTemplate = new OpenDental.ODtextBox();
-			this.butImport = new OpenDental.UI.Button();
+			this.butBrowse = new OpenDental.UI.Button();
 			this.SuspendLayout();
 			// 
 			// textPath
@@ -105,16 +105,16 @@ namespace OpenDental{
 			this.textTemplate.TabIndex = 9;
 			this.textTemplate.Text = "";
 			// 
-			// butImport
+			// butBrowse
 			// 
-			this.butImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.butImport.Location = new System.Drawing.Point(501, 31);
-			this.butImport.Name = "butImport";
-			this.butImport.Size = new System.Drawing.Size(29, 24);
-			this.butImport.TabIndex = 6;
-			this.butImport.Text = "...";
-			this.butImport.UseVisualStyleBackColor = true;
-			this.butImport.Click += new System.EventHandler(this.butImport_Click);
+			this.butBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.butBrowse.Location = new System.Drawing.Point(501, 29);
+			this.butBrowse.Name = "butImport";
+			this.butBrowse.Size = new System.Drawing.Size(29, 24);
+			this.butBrowse.TabIndex = 6;
+			this.butBrowse.Text = "...";
+			this.butBrowse.UseVisualStyleBackColor = true;
+			this.butBrowse.Click += new System.EventHandler(this.butBrowse_Click);
 			// 
 			// FormProgramLinkOutputFile
 			// 
@@ -127,7 +127,7 @@ namespace OpenDental{
 			this.Controls.Add(this.textTemplate);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
-			this.Controls.Add(this.butImport);
+			this.Controls.Add(this.butBrowse);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "FormProgramLinkOutputFile";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -139,7 +139,7 @@ namespace OpenDental{
 		}
 
 		#endregion
-		private UI.Button butImport;
+		private UI.Button butBrowse;
 		private System.Windows.Forms.TextBox textPath;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;

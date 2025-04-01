@@ -1174,8 +1174,8 @@ namespace OpenDentBusiness {
 			ComputeEstimatesForPatNums(listPatNums);
 		}
 
-		///<summary>Computes estimates for all patients passed. Optionally set hasCompletedProcs true to compute estimates for completed procedures that are not associated with a claim.</summary>
-		public static void ComputeEstimatesForPatNums(List<long> listPatNums,bool hasCompletedProcs=false) {
+		///<summary>Computes estimates for all patients passed. Optionally set hasCompletedProcs true to compute estimates for completed procedures that are not associated with a claim. Only set doSkipCanadaLabFees if the plan has been deleted, otherwise duplicate lab estimates will be created.</summary>
+		public static void ComputeEstimatesForPatNums(List<long> listPatNums,bool hasCompletedProcs=false,bool doSkipCanadaLabFees=true) {
 			Meth.NoCheckMiddleTierRole();
 			listPatNums=listPatNums.Distinct().ToList();
 			for(int i=0;i<listPatNums.Count;i++) {
@@ -1224,7 +1224,7 @@ namespace OpenDentBusiness {
 					patient.PriProv,patient.SecProv,patient.FeeSched,listInsPlans,listProcedures.Select(x=>x.ClinicNum).ToList(),null,//don't need appts to set proc provs
 					listSubstitutionLinks,discountPlanNum);
 				Procedures.ComputeEstimatesForAll(patNum,listClaimProcs,listProcedures,listInsPlans,listPatPlans,listBenefits,patient.Age,listInsSubs,
-					listClaimProcsAll,false,listSubstitutionLinks,listFees);
+					listClaimProcsAll,false,listSubstitutionLinks,listFees,doSkipCanadaLabFees);
 				Patients.SetHasIns(patNum);
 			}
 		}

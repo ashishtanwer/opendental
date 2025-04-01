@@ -4346,7 +4346,13 @@ namespace OpenDentBusiness {
 			Meth.NoCheckMiddleTierRole();
 			string retVal=address;
 			if(address2!="") {
-				retVal+="\r\n"+address2;
+				//Per USPS (https://pe.usps.com/text/pub28/28c2_003.htm), when 'Secondary Address Unit Designators' (#, APT, UNIT, etc) are used, then their '...preferred location is at the end of the Delivery Address Line'. It is especially important to format our addresses this way when the result of this method is sent as part of an HTML email. In that case, lines starting with # will be interpreted as ordered lists when passed through MarkupEdit.TranslateToXhtml(). That would cause the user to receive an improperly formatted address.
+				if(address2.StartsWith("#")) {
+					retVal+=" "+address2;
+				}
+				else {//Since we do not know the contents of address2, we will add it on it's own line if it doesn't start with a #
+					retVal+="\r\n"+address2;
+				}
 			}
 			retVal+="\r\n"+city+", "+state+" "+zip;
 			return retVal;

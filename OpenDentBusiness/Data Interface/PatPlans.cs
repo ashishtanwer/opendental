@@ -431,7 +431,7 @@ namespace OpenDentBusiness{
 				}
 			}
 			//Include completed procedures when computing estimates so that they are removed.
-			InsPlans.ComputeEstimatesForPatNums(new List<long> { patNum },hasCompletedProcs:true);
+			InsPlans.ComputeEstimatesForPatNums(new List<long> { patNum },hasCompletedProcs:true,doSkipCanadaLabFees:false);
 //Cameron_ Possibly create outbound ADT message to update insurance info
 		}
 

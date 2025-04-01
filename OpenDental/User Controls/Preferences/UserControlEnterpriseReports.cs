@@ -187,7 +187,7 @@ namespace OpenDental {
 							+" to "+PrefC.GetStringSilent(PrefName.ReportingServerURI);
 					}
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,Security.CurUser.UserNum,logEntry);
+				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,logEntry);
 				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"Report settings have been changed.");
 			}
 			return true;

@@ -4234,10 +4234,10 @@ namespace OpenDentBusiness {
 			return false;
 		}
 
-		///<summary>After changing important coverage plan info, this is called to recompute estimates for all procedures for this patient.</summary>
+		///<summary>After changing important coverage plan info, this is called to recompute estimates for all procedures for this patient. Only set doSkipCanadaLabFees if the plan has been deleted, otherwise duplicate lab estimates will be created.</summary>
 		public static void ComputeEstimatesForAll(long patNum,List<ClaimProc> claimProcs,List<Procedure> procs,List<InsPlan> planList,
 			List<PatPlan> patPlans,List<Benefit> benefitList,int patientAge,List<InsSub> subList,List<ClaimProc> listClaimProcsAll=null,bool isClaimProcRemoveNeeded=false,
-			List<SubstitutionLink> listSubstLinks=null,List<Fee> listFees=null) 
+			List<SubstitutionLink> listSubstLinks=null,List<Fee> listFees=null,bool doSkipCanadaLabFees=true) 
 		{
 			Meth.NoCheckMiddleTierRole();
 			//Get data for any OrthoCases that may be linked to procs in procs list
@@ -4261,8 +4261,9 @@ namespace OpenDentBusiness {
 			}
 			BlueBookEstimateData blueBookEstimateData=new BlueBookEstimateData(planList,subList,patPlans,procs,listSubstLinks);
 			for(int i=0;i<procs.Count;i++) {
-				if(procs[i].ProcNumLab!=0){
+				if(procs[i].ProcNumLab!=0 && doSkipCanadaLabFees) {
 					//Labs have their estimates calculated through their parents. Without this claimProcs have duplicated for a lab in the past.
+					//We allow labs to continue past this check if the plan for the lab has been deleted. This allows the estimate to be deleted.
 					continue;
 				}
 				OrthoProcLink orthoProcLink=listOrthoProcLinks.Find(x=>x.ProcNum==procs[i].ProcNum);

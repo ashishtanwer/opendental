@@ -214,46 +214,48 @@ namespace OpenDental {
 			textNarrative.Text=ClaimCur.Narrative;
 		}
 
-		private void buttonDeleteImageAttachments_Click(object sender,EventArgs e) {
-			if(gridMain.GetSelectedIndex()==-1) {
-				MsgBox.Show("Select attachment image(s) to delete.");
-				return;
-			}
-			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete the selected image(s)?")) {
-				return;
-			}
-			List<ClaimAttach> listClaimAttaches=new List<ClaimAttach>();
-			int counterOldClaimAttach=0;//Track the number of Claim Attaches with a bad ImageReferenceId
-			for(int i=0;i<gridMain.SelectedIndices.Length;i++) {
-				if(((ClaimAttach)gridMain.ListGridRows[gridMain.SelectedIndices[i]].Tag).ImageReferenceId==0) {
-					counterOldClaimAttach++;
-					continue;//Don't allow ClaimAttach with a bad ImageReferenceId as this will cause the DXC call to fail
-				}
-				listClaimAttaches.Add((ClaimAttach)gridMain.ListGridRows[gridMain.SelectedIndices[i]].Tag);
-			}
-			if(listClaimAttaches.Count==0) {//All selected attachment images have a bad ImageReferenceId
-				MsgBox.Show("None of the selected attachment image(s) are able to be deleted. Any images that were sent before the delete image feature was added cannot be deleted.");
-				return;
-			}
-			if(counterOldClaimAttach!=0) {//One or more selected attachment images have a bad ImageReferenceId
-				if(!MsgBox.Show(MsgBoxButtons.OKCancel,counterOldClaimAttach+" attachment image(s) cannot be deleted because they were sent before the delete image feature was added. Would you like to delete the others?")) {
-					return;
-				}
-			}
-			try {
-				ClaimConnect.DeleteImages(ClaimCur,listClaimAttaches);
-			}
-			catch {
-				MsgBox.Show("Unable to delete the selected attachment image(s).");
-				return;
-			}
-			//Delete local claimattaches to match what was removed from DXC
-			for(int i=0;i<listClaimAttaches.Count;i++) {
-				ClaimCur.Attachments.Remove(listClaimAttaches[i]);
-			}
-			Claims.Update(ClaimCur);
-			FillGrid();
-		}
+		//Due to DXC changing their attachment behavior, the ability to delete individual images from an attachment has been removed.
+		//Job 59808 will overhaul our attachment workflow in order to comply with DXC's new rules and return the ability to delete.
+		//private void buttonDeleteImageAttachments_Click(object sender,EventArgs e) {
+		//	if(gridMain.GetSelectedIndex()==-1) {
+		//		MsgBox.Show("Select attachment image(s) to delete.");
+		//		return;
+		//	}
+		//	if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete the selected image(s)?")) {
+		//		return;
+		//	}
+		//	List<ClaimAttach> listClaimAttaches=new List<ClaimAttach>();
+		//	int counterOldClaimAttach=0;//Track the number of Claim Attaches with a bad ImageReferenceId
+		//	for(int i=0;i<gridMain.SelectedIndices.Length;i++) {
+		//		if(((ClaimAttach)gridMain.ListGridRows[gridMain.SelectedIndices[i]].Tag).ImageReferenceId==0) {
+		//			counterOldClaimAttach++;
+		//			continue;//Don't allow ClaimAttach with a bad ImageReferenceId as this will cause the DXC call to fail
+		//		}
+		//		listClaimAttaches.Add((ClaimAttach)gridMain.ListGridRows[gridMain.SelectedIndices[i]].Tag);
+		//	}
+		//	if(listClaimAttaches.Count==0) {//All selected attachment images have a bad ImageReferenceId
+		//		MsgBox.Show("None of the selected attachment image(s) are able to be deleted. Any images that were sent before the delete image feature was added cannot be deleted.");
+		//		return;
+		//	}
+		//	if(counterOldClaimAttach!=0) {//One or more selected attachment images have a bad ImageReferenceId
+		//		if(!MsgBox.Show(MsgBoxButtons.OKCancel,counterOldClaimAttach+" attachment image(s) cannot be deleted because they were sent before the delete image feature was added. Would you like to delete the others?")) {
+		//			return;
+		//		}
+		//	}
+		//	try {
+		//		ClaimConnect.DeleteImages(ClaimCur,listClaimAttaches);
+		//	}
+		//	catch {
+		//		MsgBox.Show("Unable to delete the selected attachment image(s).");
+		//		return;
+		//	}
+		//	//Delete local claimattaches to match what was removed from DXC
+		//	for(int i=0;i<listClaimAttaches.Count;i++) {
+		//		ClaimCur.Attachments.Remove(listClaimAttaches[i]);
+		//	}
+		//	Claims.Update(ClaimCur);
+		//	FillGrid();
+		//}
 
 		private void FormClaimAttachHistory_FormClosing(object sender,FormClosingEventArgs e) {
 			if(ClaimCur.Narrative==textNarrative.Text) {//Limited to 2000 char in UI

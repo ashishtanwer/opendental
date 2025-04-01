@@ -2561,8 +2561,7 @@ namespace OpenDental{
 				return;//bridge is not available for web users at this time. 
 			}
 			if(program.ProgName==ProgramName.Pearl.ToString() //Pearl button pressed
-				&& !Programs.IsEnabled(program.ProgramNum) //Pearl disabled
-				&& ProgramProperties.GetFirstOrDefault(x => x.PropertyDesc=="Disable Advertising")?.PropertyValue!="1") //Pearl button not hidden
+				&& !Programs.IsEnabled(program.ProgramNum)) //Pearl disabled
 			{
 				Process.Start("https://www.opendental.com/resources/redirects/redirectpearl.html");
 				return;

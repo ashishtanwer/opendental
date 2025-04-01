@@ -88,7 +88,7 @@ namespace OpenDentBusiness{
 		Quarterly
 	}
 
-	///<summary></summary>
+	///<summary>Used in pref PayPlansVersion. Once a user sets it to 2 (Age Credits and Debits), there is no UI to change it.</summary>
 	public enum PayPlanVersions {
 		///<summary>1</summary>
 		[Description("Do Not Age (legacy)")]

@@ -34,6 +34,8 @@ namespace OpenDental {
 		private bool _isHeadingPrinted;
 		private bool _isForNewOrthoCase;
 		private int _pagesPrinted;
+		/// <summary>Set to true when CreateSchedule() is called. Will be false if the payment plan terms have changed and the user has not clicked Create Schedule to generate an up-to-date schedule and note. If false, the user will be displayed a warning when saving the payment plan to encourage creating an updated schedule.</summary>
+		private bool _createdSchedule;
 		#endregion
 		#region Properties
 		private decimal _sumAttachedProduction {
@@ -136,6 +138,7 @@ namespace OpenDental {
 			}
 			FillCharges();
 			FillProduction();
+			_createdSchedule=true;//Initialize to true since plan is either new or existing terms have not yet been changed.
 			#region Signature
 			if(_dynamicPaymentPlanData.PayPlan.Signature!="" && _dynamicPaymentPlanData.PayPlan.Signature!=null) {
 				//check to see if sheet is signed before showing
@@ -197,7 +200,7 @@ namespace OpenDental {
 			PayPlanCharges.DeleteDebitsWithoutPayments(listPayPlanCharges,doDelete:true);
 			SecurityLogs.MakeLogEntry(EnumPermType.PayPlanChargeEdit,listPayPlanCharges[0].PatNum,"Deleted.");
 			LoadPayDataFromDB();
-			FillCharges();
+			FillCharges(isSilent:true);
 			FillProduction();
 		}
 
@@ -264,7 +267,7 @@ namespace OpenDental {
 				}
 			}
 			LoadPayDataFromDB();
-			FillCharges();
+			FillCharges(isSilent:true);
 			FillProduction();
 		}
 
@@ -318,10 +321,11 @@ namespace OpenDental {
 		}
 
 		///<summary>Fills both charges that have come due (black in color) and expected charges (grey) that have not been added yet as well
-		///as payments that have been made for the charges that have come due. Returns true if the method wasn't returned from early due to errors.
+		///as payments that have been made for the charges that have come due. Set isSilent to true to prevent the msgbox in ValidateTerms() from showing.
+		///Returns true if the method wasn't returned from early due to errors.
 		///Returns false if TryGetTermsFromUI fails or terms.AreTermsValid fails.</summary>
-		private bool FillCharges(bool isSilent=false) {
-			if(!TryGetTermsFromUI(out PayPlanTerms terms,isSilent)) {
+		private bool FillCharges(bool isSilent=false,bool isCloseout=false) {
+			if(!TryGetTermsFromUI(out PayPlanTerms terms,isSilent,isCloseout:isCloseout)) {
 				return false;
 			}
 			gridCharges.BeginUpdate();
@@ -417,9 +421,9 @@ namespace OpenDental {
 		}
 
 		///<summary>Helper to get and store the UI elements so we do not need to pass in more than what is necessary. Set from the UI, not DB.</summary>
-		private bool TryGetTermsFromUI(out PayPlanTerms payPlanTerms,bool isSilent=false,bool doValidateTerms=true) {
+		private bool TryGetTermsFromUI(out PayPlanTerms payPlanTerms,bool isSilent=false,bool doValidateTerms=true,bool isCloseout=false) {
 			payPlanTerms=new PayPlanTerms();
-			if(doValidateTerms && !ValidateTerms(isSilent)) {//saveData relies on this, if removed from this method, needs to be addded to SaveData()
+			if(doValidateTerms && !ValidateTerms(isSilent,isCloseout:isCloseout)) {//saveData relies on this, if removed from this method, needs to be addded to SaveData()
 				return false;
 			}
 			payPlanTerms.APR=PIn.Double(textAPR.Text);
@@ -742,10 +746,12 @@ namespace OpenDental {
 
 		private void TextInterestDelay_KeyPress(object sender,KeyPressEventArgs e) {
 			textDateInterestStart.Text="";
+			TextBox_KeyPress(sender,e);
 		}
 
 		private void TextDateInterestStart_KeyPress(object sender,KeyPressEventArgs e) {
 			textInterestDelay.Text="";
+			TextBox_KeyPress(sender,e);
 		}
 
 		private void TextAPR_TextChanged(object sender,EventArgs e) {
@@ -754,11 +760,24 @@ namespace OpenDental {
 
 		private void textPaymentCount_KeyPress(object sender,System.Windows.Forms.KeyPressEventArgs e) {
 			textPeriodPayment.Text="";
+			TextBox_KeyPress(sender,e);
 		}
 
 		private void textPeriodPayment_KeyPress(object sender,System.Windows.Forms.KeyPressEventArgs e) {
 			textPaymentCount.Text="";
+			TextBox_KeyPress(sender,e);
 		}
+
+		/// <summary>Event handler that fires when the user presses a key in a TextBox in the Terms GroupBox.</summary>
+		private void TextBox_KeyPress(object sender,KeyPressEventArgs e){
+			_createdSchedule=false;
+		}
+
+		///<summary>Event handler that fires when any of the radio buttons in the Frequency or Treatment Planned group boxes is clicked.</summary>
+		private void Radio_Click(object sender,EventArgs e) {
+			_createdSchedule=false;
+		}
+
 
 		private void butCreateSched_Click(object sender,System.EventArgs e) {
 			CreateSchedule();
@@ -775,15 +794,23 @@ namespace OpenDental {
 				}
 				CalculateDateInterestStartFromInterestDelay();
 				FillCharges();
-				SetNote();
+				if(!String.IsNullOrEmpty(textNote.Text)) {
+					textNote.Text+="\r\n";
+				}
+				textNote.Text+=DateTime.Today.ToShortDateString()
+					+" - "+Lan.g(this,"Date of Agreement")+": "+textDate.Text
+					+", "+Lan.g(this,"Total Amount")+": "+textTotalPrincipal.Text
+					+", "+Lan.g(this,"APR")+": "+textAPR.Text
+					+", "+Lan.g(this,"Total Cost of Loan")+": "+textTotalCost.Text;
 				textCompletedAmt.Text=PayPlanProductionEntry.GetDynamicPayPlanCompletedAmount(_dynamicPaymentPlanData.PayPlan,_dynamicPaymentPlanData.ListPayPlanProductionEntries).ToString("f");
 				signatureBoxWrapper.FillSignature(_dynamicPaymentPlanData.PayPlan.SigIsTopaz,PayPlans.GetKeyDataForSignature(_dynamicPaymentPlanData.PayPlan),_dynamicPaymentPlanData.PayPlan.Signature);
+				_createdSchedule=true;
 				return true;
 			}
 			return false;
 		}
 
-		private bool ValidateTerms(bool isSilent=false,bool doCheckAPR=true) {
+		private bool ValidateTerms(bool isSilent=false,bool doCheckAPR=true,bool isCloseout=false) {
 			if(_isLoading) {
 				return true;
 			}
@@ -928,11 +955,16 @@ namespace OpenDental {
 				}
 			}
 			LoadPayDataFromDB();
-			FillCharges();
+			FillCharges(isSilent:true);
 			FillProduction();
 		}
 
 		private void gridLinkedProduction_CellLeave(object sender,ODGridClickEventArgs e) {
+			//This happens when the event handler gets raised AFTER the grid gets refreshed by unchecking 'Show Attached P&I' while one of those attached rows is selected.
+			if(e.Row>=gridLinkedProduction.ListGridRows.Count) {
+				gridLinkedProduction.SetSelected(gridLinkedProduction.SelectedIndices,setValue:false);
+				return;
+			}
 			if(checkProductionLock.Checked || !(gridLinkedProduction.ListGridRows[e.Row].Tag is PayPlanProductionEntry)) {
 				FillProduction();//Show the user that their changes were not saved.
 				return;
@@ -1231,10 +1263,10 @@ namespace OpenDental {
 				MsgBox.Show(this,"This payment plan has been deleted by another user.");
 				return;
 			}
-			if(!TryGetTermsFromUI(out PayPlanTerms terms)) {//also validates terms
+			if(!TryGetTermsFromUI(out PayPlanTerms terms,isCloseout:true)) {//also validates terms
 				return ;
 			}
-			if(!FillCharges()) {
+			if(!FillCharges(isCloseout:true)) {
 				return;
 			}
 			_dynamicPaymentPlanData=PayPlanEdit.CloseOutDynamicPaymentPlan(
@@ -1375,14 +1407,6 @@ namespace OpenDental {
 			return pdfDocument;
 		}
 
-		private void SetNote() {
-			textNote.Text=_dynamicPaymentPlanData.PayPlan.Note+DateTime.Today.ToShortDateString()
-				+" - "+Lan.g(this,"Date of Agreement")+": "+textDate.Text
-				+", "+Lan.g(this,"Total Amount")+": "+textTotalPrincipal.Text
-				+", "+Lan.g(this,"APR")+": "+textAPR.Text
-				+", "+Lan.g(this,"Total Cost of Loan")+": "+textTotalCost.Text;
-		}
-
 		///<summary>Creates a new sheet from a given Pay plan.</summary>
 		private Sheet PayPlanToSheet(PayPlan payPlan) {
 			Sheet sheet=SheetUtil.CreateSheet(SheetDefs.GetInternalOrCustom(SheetInternalType.PaymentPlan),_dynamicPaymentPlanData.Patient.PatNum);
@@ -1405,7 +1429,7 @@ namespace OpenDental {
 		private void checkShowAttachedPnI_CheckedChanged(object sender,EventArgs e) {
 			FillProduction();
 		}
-
+		
 		///<summary>Returns true for successful saving and false if there was a problem. 
 		///isUiValid is only true if a previous method running TryGetTermsFromUI and has returned true. 
 		///isUiValid is false when another method has run TryGetTermsFromUI and returned false, 
@@ -1422,6 +1446,12 @@ namespace OpenDental {
 			if(!isUiValid || !TryGetTermsFromUI(out PayPlanTerms terms)) {//also validates terms
 				return false;
 			}
+			if(!_createdSchedule){
+				if(!MsgBox.Show(MsgBoxButtons.YesNo,"The payment plan terms have been changed. You should use the Create Schedule button before saving. Continue anyway?")) {
+					return false;
+				}
+				_createdSchedule=true;
+			}
 			_dynamicPaymentPlanData=PayPlanEdit.SaveDynamicPaymentPlanAndTerms(
 				terms,
 				_dynamicPaymentPlanData,
@@ -1437,6 +1467,9 @@ namespace OpenDental {
 		}
 
 		private void butDelete_Click(object sender,System.EventArgs e) {
+			if(Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,PIn.Date(textDate.Text))) {
+				return;
+			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete payment plan? All debits and credits will also be deleted, and all recurring charges associated to the payment plan will stop and their settings will be cleared.")) {
 				return;
 			}
@@ -1454,7 +1487,8 @@ namespace OpenDental {
 
 		private void butSave_Click(object sender,System.EventArgs e) {
 			if(_dynamicPaymentPlanData.PayPlan.IsClosed) {
-				butSave.Text="OK";
+				//At this point, the button says "Reopen"
+				butSave.Text="Save";
 				butDelete.Enabled=true;
 				butClosePlan.Enabled=true;
 				labelClosed.Visible=false;

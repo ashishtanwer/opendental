@@ -48,6 +48,7 @@ namespace OpenDental{
 			listBoxLicense.Items.Add("NDde",Properties.Resources.NDde);
 			listBoxLicense.Items.Add("Newton Soft",Properties.Resources.NewtonSoft_Json);
 			listBoxLicense.Items.Add("Oracle",Properties.Resources.Oracle);
+			listBoxLicense.Items.Add("Pearl",Properties.Resources.Pearl);
 			listBoxLicense.Items.Add("PDFSharp",Properties.Resources.PdfSharp);
 			listBoxLicense.Items.Add("SharpDX",Properties.Resources.SharpDX);
 			listBoxLicense.Items.Add("Sparks3D",Properties.Resources.Sparks3D);

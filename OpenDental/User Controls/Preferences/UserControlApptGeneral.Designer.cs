@@ -30,10 +30,10 @@ namespace OpenDental {
 			this.groupBoxOD2 = new OpenDental.UI.GroupBox();
 			this.labelApptProvChangePrompt = new System.Windows.Forms.Label();
 			this.comboApptProvChangePrompt = new OpenDental.UI.ComboBox();
+			this.textApptWithoutProcsDefaultLength = new OpenDental.ValidNum();
 			this.checkAppointmentTimeIsLocked = new OpenDental.UI.CheckBox();
 			this.checkApptsRequireProc = new OpenDental.UI.CheckBox();
 			this.checkApptAllowFutureComplete = new OpenDental.UI.CheckBox();
-			this.textApptWithoutProcsDefaultLength = new OpenDental.ValidNum();
 			this.checkUnscheduledListNoRecalls = new OpenDental.UI.CheckBox();
 			this.checkApptsAllowOverlap = new OpenDental.UI.CheckBox();
 			this.labelApptWithoutProcsDefaultLength = new System.Windows.Forms.Label();
@@ -41,17 +41,17 @@ namespace OpenDental {
 			this.checkApptAllowEmptyComplete = new OpenDental.UI.CheckBox();
 			this.groupBoxCalendarBehavior = new OpenDental.UI.GroupBox();
 			this.textApptAutoRefreshRange = new OpenDental.ValidNum();
-			this.labelApptAutoRefreshRange = new System.Windows.Forms.Label();
 			this.comboSearchBehavior = new OpenDental.UI.ComboBox();
+			this.labelApptAutoRefreshRange = new System.Windows.Forms.Label();
 			this.label13 = new System.Windows.Forms.Label();
 			this.checkApptTimeReset = new OpenDental.UI.CheckBox();
 			this.groupBox2 = new OpenDental.UI.GroupBox();
-			this.label37 = new System.Windows.Forms.Label();
 			this.comboBrokenApptProc = new OpenDental.UI.ComboBox();
+			this.comboBrokenApptAdjType = new OpenDental.UI.ComboBox();
+			this.label37 = new System.Windows.Forms.Label();
 			this.checkBrokenApptCommLog = new OpenDental.UI.CheckBox();
 			this.checkBrokenApptRequiredOnMove = new OpenDental.UI.CheckBox();
 			this.checkBrokenApptAdjustment = new OpenDental.UI.CheckBox();
-			this.comboBrokenApptAdjType = new OpenDental.UI.ComboBox();
 			this.label7 = new System.Windows.Forms.Label();
 			this.groupBoxProduction.SuspendLayout();
 			this.groupBoxOD2.SuspendLayout();
@@ -126,6 +126,17 @@ namespace OpenDental {
 			this.comboApptProvChangePrompt.Size = new System.Drawing.Size(203, 21);
 			this.comboApptProvChangePrompt.TabIndex = 328;
 			// 
+			// textApptWithoutProcsDefaultLength
+			// 
+			this.textApptWithoutProcsDefaultLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.textApptWithoutProcsDefaultLength.Location = new System.Drawing.Point(400, 65);
+			this.textApptWithoutProcsDefaultLength.MaxVal = 600;
+			this.textApptWithoutProcsDefaultLength.MinVal = 5;
+			this.textApptWithoutProcsDefaultLength.Name = "textApptWithoutProcsDefaultLength";
+			this.textApptWithoutProcsDefaultLength.ShowZero = false;
+			this.textApptWithoutProcsDefaultLength.Size = new System.Drawing.Size(40, 20);
+			this.textApptWithoutProcsDefaultLength.TabIndex = 314;
+			// 
 			// checkAppointmentTimeIsLocked
 			// 
 			this.checkAppointmentTimeIsLocked.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -159,16 +170,6 @@ namespace OpenDental {
 			this.checkApptAllowFutureComplete.TabIndex = 311;
 			this.checkApptAllowFutureComplete.Text = "Allow setting future appointments complete";
 			// 
-			// textApptWithoutProcsDefaultLength
-			// 
-			this.textApptWithoutProcsDefaultLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.textApptWithoutProcsDefaultLength.Location = new System.Drawing.Point(340, 65);
-			this.textApptWithoutProcsDefaultLength.MaxVal = 600;
-			this.textApptWithoutProcsDefaultLength.Name = "textApptWithoutProcsDefaultLength";
-			this.textApptWithoutProcsDefaultLength.ShowZero = false;
-			this.textApptWithoutProcsDefaultLength.Size = new System.Drawing.Size(100, 20);
-			this.textApptWithoutProcsDefaultLength.TabIndex = 314;
-			//
 			// checkUnscheduledListNoRecalls
 			// 
 			this.checkUnscheduledListNoRecalls.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -192,11 +193,11 @@ namespace OpenDental {
 			// labelApptWithoutProcsDefaultLength
 			// 
 			this.labelApptWithoutProcsDefaultLength.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.labelApptWithoutProcsDefaultLength.Location = new System.Drawing.Point(20, 68);
+			this.labelApptWithoutProcsDefaultLength.Location = new System.Drawing.Point(80, 68);
 			this.labelApptWithoutProcsDefaultLength.Name = "labelApptWithoutProcsDefaultLength";
 			this.labelApptWithoutProcsDefaultLength.Size = new System.Drawing.Size(319, 17);
 			this.labelApptWithoutProcsDefaultLength.TabIndex = 313;
-			this.labelApptWithoutProcsDefaultLength.Text = "Appointment without procedures default length";
+			this.labelApptWithoutProcsDefaultLength.Text = "Appointment without procedures default length in minutes";
 			this.labelApptWithoutProcsDefaultLength.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// checkPreventChangesToComplAppts
@@ -243,6 +244,14 @@ namespace OpenDental {
 			this.textApptAutoRefreshRange.Size = new System.Drawing.Size(70, 20);
 			this.textApptAutoRefreshRange.TabIndex = 320;
 			// 
+			// comboSearchBehavior
+			// 
+			this.comboSearchBehavior.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboSearchBehavior.Location = new System.Drawing.Point(237, 10);
+			this.comboSearchBehavior.Name = "comboSearchBehavior";
+			this.comboSearchBehavior.Size = new System.Drawing.Size(203, 21);
+			this.comboSearchBehavior.TabIndex = 298;
+			// 
 			// labelApptAutoRefreshRange
 			// 
 			this.labelApptAutoRefreshRange.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -252,14 +261,6 @@ namespace OpenDental {
 			this.labelApptAutoRefreshRange.TabIndex = 319;
 			this.labelApptAutoRefreshRange.Text = "Number of days out to automatically refresh Appointments Module";
 			this.labelApptAutoRefreshRange.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// comboSearchBehavior
-			// 
-			this.comboSearchBehavior.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboSearchBehavior.Location = new System.Drawing.Point(237, 10);
-			this.comboSearchBehavior.Name = "comboSearchBehavior";
-			this.comboSearchBehavior.Size = new System.Drawing.Size(203, 21);
-			this.comboSearchBehavior.TabIndex = 298;
 			// 
 			// label13
 			// 
@@ -297,6 +298,22 @@ namespace OpenDental {
 			this.groupBox2.TabIndex = 305;
 			this.groupBox2.Text = "Broken Appointment Automation";
 			// 
+			// comboBrokenApptProc
+			// 
+			this.comboBrokenApptProc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboBrokenApptProc.Location = new System.Drawing.Point(278, 15);
+			this.comboBrokenApptProc.Name = "comboBrokenApptProc";
+			this.comboBrokenApptProc.Size = new System.Drawing.Size(162, 21);
+			this.comboBrokenApptProc.TabIndex = 234;
+			// 
+			// comboBrokenApptAdjType
+			// 
+			this.comboBrokenApptAdjType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.comboBrokenApptAdjType.Location = new System.Drawing.Point(237, 78);
+			this.comboBrokenApptAdjType.Name = "comboBrokenApptAdjType";
+			this.comboBrokenApptAdjType.Size = new System.Drawing.Size(203, 21);
+			this.comboBrokenApptAdjType.TabIndex = 70;
+			// 
 			// label37
 			// 
 			this.label37.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -306,14 +323,6 @@ namespace OpenDental {
 			this.label37.TabIndex = 235;
 			this.label37.Text = "Broken appointment procedure type";
 			this.label37.TextAlign = System.Drawing.ContentAlignment.TopRight;
-			// 
-			// comboBrokenApptProc
-			// 
-			this.comboBrokenApptProc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboBrokenApptProc.Location = new System.Drawing.Point(278, 15);
-			this.comboBrokenApptProc.Name = "comboBrokenApptProc";
-			this.comboBrokenApptProc.Size = new System.Drawing.Size(162, 21);
-			this.comboBrokenApptProc.TabIndex = 234;
 			// 
 			// checkBrokenApptCommLog
 			// 
@@ -344,14 +353,6 @@ namespace OpenDental {
 			this.checkBrokenApptAdjustment.Size = new System.Drawing.Size(385, 17);
 			this.checkBrokenApptAdjustment.TabIndex = 217;
 			this.checkBrokenApptAdjustment.Text = "Make broken appointment adjustment";
-			// 
-			// comboBrokenApptAdjType
-			// 
-			this.comboBrokenApptAdjType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.comboBrokenApptAdjType.Location = new System.Drawing.Point(237, 78);
-			this.comboBrokenApptAdjType.Name = "comboBrokenApptAdjType";
-			this.comboBrokenApptAdjType.Size = new System.Drawing.Size(203, 21);
-			this.comboBrokenApptAdjType.TabIndex = 70;
 			// 
 			// label7
 			// 

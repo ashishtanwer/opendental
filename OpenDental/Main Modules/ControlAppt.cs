@@ -295,16 +295,19 @@ namespace OpenDental {
 			ToolStripItem toolStripItemDelete=FindBlockoutToolStripItem(MenuItemNames.DeleteBlockout);
 			//AddBlockout is not used here
 			ToolStripItem toolStripItemCutCopyPaste=FindBlockoutToolStripItem(MenuItemNames.BlockoutCutCopyPaste);
+			ToolStripItem toolStripItemClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
 			ToolStripItem toolStripItemClearForDay=new ToolStripMenuItem();
-			ToolStripItem toolStripItemClearForDayOp=new ToolStripMenuItem();
 			ToolStripItem toolStripItemClearForDayClinics=new ToolStripMenuItem();
-			if(PrefC.HasClinicsEnabled) {//No clear for day if clinics enabled
-				toolStripItemClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
-				toolStripItemClearForDayClinics=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayClinicOnly);
+			try {//The menu items are set on load, so if clinics was just enabled/disabled, then the correct ToolStripItem will be missing and throw an ODException.
+				if(PrefC.HasClinicsEnabled) {//No clear for day if clinics enabled
+					toolStripItemClearForDayClinics=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayClinicOnly);
+				}
+				else {//Clinics disabled, no clear for day clinics
+					toolStripItemClearForDay=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDay);
+				}
 			}
-			else {//Clinics disabled, no clear for day clinics
-				toolStripItemClearForDay=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDay);
-				toolStripItemClearForDayOp=FindBlockoutToolStripItem(MenuItemNames.ClearAllBlockoutsForDayOpOnly);
+			catch (ODException ex){
+				ex.DoNothing();//It isn't there, the user needs to restart to see the changes.
 			}
 			if(!Security.IsAuthorized(EnumPermType.Blockouts,true)) {
 				toolStripItemCutCopyPaste.Enabled=false;
@@ -2042,6 +2045,12 @@ namespace OpenDental {
 				MsgBox.Show(this,"Appointment not found.");
 				return null;
 			}
+			if(appointment.AptStatus!=ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentEdit)) {//separate permissions for completed appts.
+				return null;
+			}
+			if(appointment.AptStatus==ApptStatus.Complete && !Security.IsAuthorized(EnumPermType.AppointmentCompleteEdit)) {
+				return null;
+			}
 			if(appointment.AptStatus==ApptStatus.PtNote || appointment.AptStatus==ApptStatus.PtNoteCompleted) {
 				MsgBox.Show(this,"Patient Notes cannot be broken.");
 				return null;
@@ -2342,6 +2351,9 @@ namespace OpenDental {
 		}
 
 		private void menuBlockClearClinic_Click(object sender,EventArgs e) {
+			if(!PrefC.HasClinicsEnabled) {
+				return;//Can happen if clinics was just disabled and the context menu item is still there.
+			}
 			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
 				return;
 			}
@@ -2355,6 +2367,9 @@ namespace OpenDental {
 		}
 
 		private void menuBlockClearDay_Click(object sender,EventArgs e) {
+			if(PrefC.HasClinicsEnabled) {
+				return;//Can happen if clinics was just enabled and the context menu item is still there.
+			}
 			if(!Security.IsAuthorized(EnumPermType.Blockouts)) {
 				return;
 			}

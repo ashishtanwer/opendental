@@ -576,6 +576,7 @@ using WpfControls.UI;
 		///<summary>Must be called after adding rows.  This computes the columns, computes the rows, lays out the scrollbars, clears SelectedIndices, draws headers, and draws rows.  Does not zero out scrollVal.</summary>
 		public void EndUpdate(){
 			_isUpdating=false;
+			canvasMain.UpdateLayout();
 			//scrollH.Visibility=Visibility.Collapsed;//this must come before ComputeRows, but it's not even working here
 			ComputeColumns();
 			//if(_hasEditableColumn) {

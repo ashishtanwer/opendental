@@ -377,6 +377,7 @@ namespace OpenDental {
 			}
 			Sheet sheetNew=Sheets.PreFillSheetFromPreviousAndDatabase(sheetDefOriginal,sheet);
 			sheetNew.IsNew=true;
+			SheetUtil.CalculateHeights(sheetNew);
 			using FormSheetFillEdit formSheetFillEdit=new FormSheetFillEdit();
 			formSheetFillEdit.SheetCur=sheetNew;
 			formSheetFillEdit.ShowDialog();

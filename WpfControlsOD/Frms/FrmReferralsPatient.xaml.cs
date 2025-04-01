@@ -371,7 +371,7 @@ namespace OpenDental {
 			SheetUtil.CalculateHeights(sheet);
 			FormLauncher formLauncherSheetFillEdit=new FormLauncher(EnumFormName.FormSheetFillEdit);
 			formLauncherSheetFillEdit.SetField("SheetCur",sheet);
-			formLauncherSheetFillEdit.ShowDialog();
+			formLauncherSheetFillEdit.Show();
 		}
 
 		private void butUp_Click(object sender,EventArgs e) {

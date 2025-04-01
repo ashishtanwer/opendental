@@ -75,7 +75,7 @@ namespace OpenDental {
 			// checkAgree
 			// 
 			this.checkAgree.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-			this.checkAgree.Location = new System.Drawing.Point(12, 373);
+			this.checkAgree.Location = new System.Drawing.Point(12, 416);
 			this.checkAgree.Name = "checkAgree";
 			this.checkAgree.Size = new System.Drawing.Size(489, 17);
 			this.checkAgree.TabIndex = 7;
@@ -89,7 +89,7 @@ namespace OpenDental {
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.richTextAgreement.Location = new System.Drawing.Point(168, 45);
 			this.richTextAgreement.Name = "richTextAgreement";
-			this.richTextAgreement.Size = new System.Drawing.Size(583, 316);
+			this.richTextAgreement.Size = new System.Drawing.Size(583, 359);
 			this.richTextAgreement.TabIndex = 8;
 			this.richTextAgreement.Text = "";
 			// 
@@ -97,7 +97,7 @@ namespace OpenDental {
 			// 
 			this.butOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this.butOK.Enabled = false;
-			this.butOK.Location = new System.Drawing.Point(676, 367);
+			this.butOK.Location = new System.Drawing.Point(676, 410);
 			this.butOK.Name = "butOK";
 			this.butOK.Size = new System.Drawing.Size(75, 26);
 			this.butOK.TabIndex = 4;
@@ -106,15 +106,18 @@ namespace OpenDental {
 			// 
 			// listBoxRegistration
 			// 
+			this.listBoxRegistration.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.listBoxRegistration.Location = new System.Drawing.Point(12, 45);
 			this.listBoxRegistration.Name = "listBoxRegistration";
-			this.listBoxRegistration.Size = new System.Drawing.Size(150, 316);
+			this.listBoxRegistration.Size = new System.Drawing.Size(150, 358);
 			this.listBoxRegistration.TabIndex = 9;
 			this.listBoxRegistration.SelectedIndexChanged += new System.EventHandler(this.listRegistration_SelectedIndexChanged);
 			// 
 			// FormRegistrationKey
 			// 
-			this.ClientSize = new System.Drawing.Size(763, 399);
+			this.ClientSize = new System.Drawing.Size(763, 442);
 			this.Controls.Add(this.listBoxRegistration);
 			this.Controls.Add(this.butOK);
 			this.Controls.Add(this.richTextAgreement);

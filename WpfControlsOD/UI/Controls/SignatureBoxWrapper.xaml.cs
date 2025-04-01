@@ -67,7 +67,11 @@ How to use the SignatureBoxWrapper control:
 		private void this_Unloaded(object sender,RoutedEventArgs e) {
 			signatureBoxWrapper.Dispose();
 			windowsFormsHost.Child=null;
-			this.Content=null;
+			if(this.IsEnabled) {
+				//Nullifying content while disabled can invalidate the WindowsFormsHost handle, leading to errors.
+				//Skipping this only causes a memory leak in Visual Studio.
+				this.Content=null;
+			}
 		}
 
 		///<summary>keyData should not be hashed.</summary>

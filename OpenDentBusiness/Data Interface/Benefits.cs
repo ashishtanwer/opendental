@@ -1567,7 +1567,7 @@ namespace OpenDentBusiness {
 				}
 				//coverage level?
 				if(listBenefits[i].CodeNum != 0) {
-					if(listBenefits[i].CodeNum==ProcedureCodes.GetCodeNum(strProcCode)) {//Enhance later for code ranges when supported by program
+					if(listBenefits[i].CodeNum==ProcedureCodes.GetCodeNum(strProcCode)) {
 						return true;//a limitation benefit exists for this specific procedure code.
 					}
 				}
@@ -1579,6 +1579,11 @@ namespace OpenDentBusiness {
 					listCovSpans=CovSpans.GetForCat(listBenefits[i].CovCatNum);
 					if(CovSpans.IsCodeInSpans(strProcCode,listCovSpans)) {
 						return true;//a limitation benefit exists for a category that contains this procedure code.
+					}
+				}
+				if(listBenefits[i].CodeGroupNum!=0) {
+					if(CodeGroups.IsProcInCodeGroup(strProcCode,listBenefits[i].CodeGroupNum)) {
+						return true;
 					}
 				}
 			}

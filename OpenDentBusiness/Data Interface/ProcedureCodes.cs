@@ -453,12 +453,46 @@ namespace OpenDentBusiness{
 			return GetCodeNumsForProcCodes(codeGroup.ProcCodes);
 		}
 
-		///<summary>Returns a list of CodeNums that have a ProcCode that starts with any of the comma separated ProcCodes passed in.
-		///E.g. Insurance benefit logic invokes this method and must match procedure codes that start the same.</summary>
-		public static List<long> GetCodeNumsForProcCodes(string procCodes) {
+		//<summary>Returns a list of CodeNums that have a ProcCode that starts with any of the comma and dash separated ProcCodes passed in. Example: Insurance benefit logic invokes this method and must match procedure codes that start the same.</summary>
+		public static List<long> GetCodeNumsForProcCodes(string stringCommaDashDCodes) {
 			Meth.NoCheckMiddleTierRole();
-			List<string> listCodes=procCodes.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
-			return GetWhereFromList(x => listCodes.Contains(x.ProcCode)).Select(x => x.CodeNum).ToList();
+			List<string> listDCodes=stringCommaDashDCodes.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(x => x.Trim()).ToList();
+			//Get dash ranges separated out and added to list
+			List<string> listDashEntries=listDCodes.FindAll(x=>x.Contains("-"));
+			for(int i=0;i<listDashEntries.Count;i++) {
+				List<string> list2DCodes=listDashEntries[i].Split("-",StringSplitOptions.RemoveEmptyEntries).ToList();
+				//Could be a code that has a dash within it. Example: D1110-2
+				if(!list2DCodes[0].Contains("D") || !list2DCodes[1].Contains("D")) {
+					continue;
+				}
+				string strStart=list2DCodes[0].Replace("D","");
+				string strEnd=list2DCodes[1].Replace("D","");
+				int startRange;
+				int endRange;
+				try {
+					startRange=Int32.Parse(strStart);
+					endRange=Int32.Parse(strEnd);
+				}
+				catch {
+					continue;
+				}
+				int count=endRange-startRange+1;
+				if(count<0) {//if codes in range are in reverse order
+					continue;
+				}
+				List<int> listRange=Enumerable.Range(startRange,count).ToList();
+				for(int j=0;j<listRange.Count;j++) {
+					string strCodeNumber=listRange[j].ToString();
+					if(strCodeNumber.Length==3) {//Preceding 0's get lost when parsing.  Example: D0272 would be parsed as 272.
+						listDCodes.Add("D0"+strCodeNumber);
+						continue;
+					}
+					listDCodes.Add("D"+strCodeNumber);
+				}
+				//Remove the string item with the dash itself
+				listDCodes.Remove(listDashEntries[i]);
+			}
+			return GetWhereFromList(x => listDCodes.Contains(x.ProcCode)).Select(x => x.CodeNum).ToList();
 		}
 
 		///<summary>Gets the CodeNums for the passed in InsHist preference.</summary>
@@ -1084,24 +1118,25 @@ namespace OpenDentBusiness{
 				}
 				procedureCode=ProcedureCodes.GetProcCode(listProcedureCodes[i].ProcCode);
 				DateTime datePrevious=procedureCode.DateTStamp;
-				bool isDescriptMatch=procedureCode.Descript==listProcedureCodes[i].Descript;
-				bool isDbProcAbbrDescBlank=string.IsNullOrWhiteSpace(procedureCode.AbbrDesc);
-				if(!isDescriptMatch || isDbProcAbbrDescBlank) {//Only increments one time for each code if there are changes necessary.
-					count++;
-				}
-				if(!isDescriptMatch) {//Update description.
+				bool changedThisLoop=false;
+				if(procedureCode.Descript!=listProcedureCodes[i].Descript) {
 					string oldDescript=procedureCode.Descript;
 					procedureCode.Descript=listProcedureCodes[i].Descript;
 					ProcedureCodes.Update(procedureCode);		
 					SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,"Code "+procedureCode.ProcCode+" changed from '"+oldDescript+"' to '"+procedureCode.Descript+"' by D-Codes Tool."
 						,procedureCode.CodeNum,datePrevious);
+					changedThisLoop|=true;
 				}
-				if(isDbProcAbbrDescBlank) {//Update abbreviation if current code.AbbrDesc in db is blank.
+				if(string.IsNullOrWhiteSpace(procedureCode.AbbrDesc) && listProcedureCodes[i].AbbrDesc!="") {
 					string oldAbbrDesc=procedureCode.AbbrDesc;
 					procedureCode.AbbrDesc=listProcedureCodes[i].AbbrDesc;
 					ProcedureCodes.Update(procedureCode);
 					SecurityLogs.MakeLogEntry(EnumPermType.ProcCodeEdit,0,$"Code {procedureCode.ProcCode} changed from '{oldAbbrDesc}' to '{procedureCode.AbbrDesc}' by D-Codes Tool."
 						,procedureCode.CodeNum,datePrevious);
+					changedThisLoop|=true;
+				}
+				if(changedThisLoop){
+					count++;
 				}
 			}
 			return count;

@@ -298,7 +298,7 @@ namespace OpenDental {
 							+" to "+PrefC.GetStringSilent(PrefName.ReportingServerURI);
 					}
 				}
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,Security.CurUser.UserNum,logentry);
+				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,logentry);
 			}
 			return hasChanged;
 		}

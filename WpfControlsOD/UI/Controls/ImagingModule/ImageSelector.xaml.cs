@@ -456,6 +456,7 @@ Only used once in Imaging module.
 				bitmapImage.Freeze(); //for use in another thread
 			});
 			image.Source=bitmapImage;
+			bitmap?.Dispose();
 		}
 		#endregion Methods - Public
 
@@ -817,6 +818,7 @@ Only used once in Imaging module.
 				bitmapImage.CacheOption = BitmapCacheOption.OnLoad;//makes it load into memory during EndInit
 				bitmapImage.EndInit();
 				bitmapImage.Freeze(); //for use in another thread
+				bitmap?.Dispose();
 			});
 			image.Source=bitmapImage;
 		}
@@ -834,6 +836,7 @@ Only used once in Imaging module.
 				bitmapImage.CacheOption = BitmapCacheOption.OnLoad;//makes it load into memory during EndInit
 				bitmapImage.EndInit();
 				bitmapImage.Freeze(); //for use in another thread
+				bitmap?.Dispose();
 			});
 			image.Source=bitmapImage;
 		}

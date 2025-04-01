@@ -2566,5 +2566,30 @@ namespace OpenDentBusiness {
 			//End B59848
 		}//End of 24_3_45() method
 
+		private static void To24_3_49() {
+			//Start B60028
+			string command="UPDATE procedurecode SET PaintType=14 "//14 = PaintType.Veneer
+				+"WHERE ProcCode IN ('D2960','D2961','D2962')";
+			Db.NonQ(command);
+			//End B60028
+		}//End of 24_3_49() method
+
+		private static void To24_3_53() {
+			//Start B60246
+			string command="UPDATE preference SET ValueString='5' WHERE PrefName='AppointmentWithoutProcsDefaultLength' AND ValueString IN ('0','1','2','3','4')";
+			Db.NonQ(command);
+			//End B60246
+		}//End of 24_3_53() method
+
+		private static void To24_3_63() {
+			string command;
+			//Start B60961
+			command="SELECT ProgramNum FROM program WHERE ProgName='CADI'";
+			long displayProgramNum=Db.GetLong(command);
+			command ="UPDATE program SET Path = 'C:\\\\CADI\\\\CADI.exe'" +//Updating path format
+				$@"WHERE ProgramNum={POut.Long(displayProgramNum)} AND Path='C:CADICADI.exe'";//If path format is still incorrect
+			Db.NonQ(command);
+			//End B60961
+		}//End 24_3_63()
 	}
 }

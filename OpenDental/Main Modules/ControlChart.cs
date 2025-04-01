@@ -3078,6 +3078,9 @@ namespace OpenDental {
 
 		///<summary></summary>
 		private void butPin_Click(object sender,EventArgs e) {
+			if(!Security.IsAuthorized(EnumPermType.AppointmentMove)) {
+				return;
+			}
 			if(gridPlanned.SelectedIndices.Length==0) {
 				MsgBox.Show(this,"Please select an item first");
 				return;
@@ -8042,14 +8045,12 @@ namespace OpenDental {
 						}
 					}
 					if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
-						DoseSpotV2.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
 						if(DoseSpotV2.SyncPrescriptionsFromDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum,actionRxAdd)) {
 							ModuleSelectedDoseSpot();
 						}
 					}
 					else {
 						//We should push any changes made locally to DS first.
-						DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
 						if(DoseSpot.SyncPrescriptionsFromDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum,actionRxAdd)) {
 							ModuleSelectedDoseSpot();
 						}
@@ -8767,20 +8768,6 @@ namespace OpenDental {
 						MessageBox.Show(Lan.g(this,"Contact support to enable eRx for clinic")+" "+clinicAbbr);
 						isDoseSpotAccessAllowed=false;
 					}
-				}
-				try {
-					if(programPropertyDoseSpotApiVersion.PropertyValue=="2") {
-						DoseSpotV2.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
-					}
-					else {
-						//Try to add any self reported medications to DoseSpot before the user gets views their list.
-						DoseSpot.SyncPrescriptionsToDoseSpot(doseSpotClinicID,doseSpotClinicKey,doseSpotUserID,Pd.PatNum);
-					}
-				}
-				catch(Exception ex) {
-					FrmFriendlyException frmFriendlyException=new FrmFriendlyException("Error: "+ex.Message,ex,false);
-					frmFriendlyException.Show();
-					return;
 				}
 				if(isDoseSpotAccessAllowed) {
 					//The user is either a provider with granted access, or a proxy clinician
@@ -9631,12 +9618,17 @@ namespace OpenDental {
 			}
 			List<ClaimProc> listClaimProcs=new List<ClaimProc>();
 			List<ClaimProcHist> listClaimProcHistsLoop=new List<ClaimProcHist>();
-			//If proc has selected teeth, we wont be showing the edit form, so set status back to what the user picked. 
-			if(IsToothSelectionValidForTxArea(procedure) || _procStatNew==ProcStat.EO) {//EO procs can't be added to an appointment in Appointment Edit Window, so skip this check
-				//If the edit form is to be shown, use Deleted as the procStatus when inserting. Otherwise insert with the users chosen value.
+			//B44786 We started pre-inserting procedures as Deleted because users on other systems were able to schedule procedures charted here before the procedure was done being edited.
+			if(IsToothSelectionValidForTxArea(procedure) 
+				//If proc has selected teeth, it is safe to insert as-is. Set status to what the user picked. 
+				//This is because proc edit window won't need to be opened to fill in missing data.
+				|| !_procStatNew.In(ProcStat.TP,ProcStat.C)) 
+				//B60210 Only TP and C proc types can be added to an appointment in Appointment Edit Window, so other statuses are safe to insert as-is
+			{
 				procedure.ProcStatus=_procStatNew;
 			}
 			else {
+				//proc edit window will be shown, so use Deleted status when inserting.
 				procedure.ProcStatus=ProcStat.D;
 			}
 			if(!ChartModules.AddProcHelper(procedure,listFees,Pd,procedure.ProcStatus,_listProceduresCharted,_listTreatPlans,_listSubstitutionLinks,priorityNum,listTpNums,

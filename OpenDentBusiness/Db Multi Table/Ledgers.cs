@@ -66,6 +66,11 @@ namespace OpenDentBusiness{
 		///<para>3) InsEst includes all insurance estimates, even future estimates. If historical, InsEst excludes ins est after AsOfDate.</para>
 		///<para>4) PayPlanDue includes all payplan charges minus credits. If historical, PayPlanDue excludes charges and credits after AsOfDate.</para></summary>
 		public static void ComputeAging(long guarantorNum,DateTime asOfDate) {
+			/*
+			************************************************************************************
+			WARNING! ANY CHANGE TO THE QUERIES BELOW MUST ALSO BE DONE IN RpCustomAging.cs
+			************************************************************************************
+			*/
 			if(guarantorNum>0) {
 				ComputeAging(new List<long>() { guarantorNum },asOfDate);
 			}
@@ -271,22 +276,21 @@ namespace OpenDentBusiness{
 					+(hasDateLastPay?",transSums.DateLastPay ":" ")
 					+"FROM (";
 			}
-			List <string> listInstantTranTypes=new List<string>();
-			listInstantTranTypes.Add("'WriteoffOrig'");
+			string transTypesInclude="trans.TranType IN ('WriteoffOrig'";
 			if(isAgedByProc) {
-				listInstantTranTypes.Add("'SumByProcAndDate'");
+				transTypesInclude+=",'SumByProcAndDate'";
 			}
-			string instantAdd="trans.TranType IN ("+string.Join(",",listInstantTranTypes)+")";
+			transTypesInclude+=")";
 			command+="SELECT "+(isGroupByGuar?"p.Guarantor PatNum,":"trans.PatNum,")
-				+"SUM(CASE WHEN (trans.TranAmount > 0 OR "+instantAdd+") "
+				+"SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+") "
 					+"AND trans.TranDate < "+ninetyDaysAgo+" THEN trans.TranAmount ELSE 0 END) ChargesOver90,"
-				+"SUM(CASE WHEN (trans.TranAmount > 0 OR "+instantAdd+") "
+				+"SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+") "
 					+"AND trans.TranDate < "+sixtyDaysAgo+" AND trans.TranDate >= "+ninetyDaysAgo+" THEN trans.TranAmount ELSE 0 END) Charges_61_90,"
-				+"SUM(CASE WHEN (trans.TranAmount > 0 OR "+instantAdd+") "
+				+"SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+") "
 					+"AND trans.TranDate < "+thirtyDaysAgo+" AND trans.TranDate >= "+sixtyDaysAgo+" THEN trans.TranAmount ELSE 0 END) Charges_31_60,"
-				+"SUM(CASE WHEN (trans.TranAmount > 0 OR "+instantAdd+") "
+				+"SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+") "
 					+"AND trans.TranDate <= "+asOfDateStr+" AND trans.TranDate >= "+thirtyDaysAgo+" THEN trans.TranAmount ELSE 0 END) Charges_0_30,"
-				+"-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+") "
+				+"-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+")) OR trans.TranType='PatPay') "
 					+"AND trans.TranDate <= "+asOfDateStr+" THEN trans.TranAmount ELSE 0 END) TotalCredits,"
 				+"SUM(CASE WHEN trans.TranAmount != 0"+(isHistoric?(" AND trans.TranDate <= "+asOfDateStr):"")+" THEN trans.TranAmount ELSE 0 END) BalTotal,"
 				+"SUM(trans.InsWoEst) InsWoEst,"

@@ -984,7 +984,7 @@ namespace OpenDentBusiness{
 					UNION
 					SELECT claim.ClaimNum,claim.ClaimIdentifier,claim.ClaimStatus,ROUND(ClaimFee, 2) ClaimFee,claim.DateService,claim.PatNum,claim.InsSubNum,claim.PlanNum
 					FROM claim
-					WHERE ClaimType='PreAuth' AND DateService={DbHelper.Year("DateService")}=1 AND SecDateEntry>{POut.Date(listDateTimes.Min())}-INTERVAL 1 YEAR
+					WHERE ClaimType='PreAuth' AND DateService='0001-01-01' AND SecDateEntry>{POut.Date(listDateTimes.Min())}-INTERVAL 1 YEAR
 				) a
 				INNER JOIN patient ON patient.PatNum=a.PatNum
 				INNER JOIN inssub ON inssub.InsSubNum=a.InsSubNum AND a.PlanNum=inssub.PlanNum
@@ -1008,7 +1008,7 @@ namespace OpenDentBusiness{
 					UNION
 					SELECT claim.ClaimNum,claim.ClaimIdentifier,claim.ClaimStatus,ROUND(ClaimFee, 2) ClaimFee,claim.DateService,claim.PatNum,claim.InsSubNum,claim.PlanNum
 					FROM claim
-					WHERE ClaimType='PreAuth' AND DateService={DbHelper.Year("DateService")}=1 AND SecDateEntry>{POut.Date(dateMin)}-INTERVAL 1 YEAR
+					WHERE ClaimType='PreAuth' AND DateService='0001-01-01' AND SecDateEntry>{POut.Date(dateMin)}-INTERVAL 1 YEAR
 				) a
 				INNER JOIN patient ON patient.PatNum=a.PatNum
 				INNER JOIN inssub ON inssub.InsSubNum=a.InsSubNum AND a.PlanNum=inssub.PlanNum

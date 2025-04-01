@@ -177,10 +177,8 @@ namespace OpenDental {
 
 		/// <summary>Event handler for closing FormSheetFillEdit when it is non-modal.</summary>
 		private void FormSheetFillEdit_Grid_FormClosing(object sender,FormClosingEventArgs e) {
-			if(((FormSheetFillEdit)sender).DialogResult==DialogResult.OK || ((FormSheetFillEdit)sender).DidChangeSheet) {
-				FillGrid();
-				panelSheetPreview.Invalidate();//The sheet may have changed, so we refresh the preview.
-			}
+			FillGrid();
+			panelSheetPreview.Invalidate();//The sheet may have changed, so we refresh the preview.
 		}
 
 		/// <summary>Event handler for closing FormSheetFillEdit when it is non-modal.</summary>

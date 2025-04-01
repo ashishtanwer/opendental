@@ -210,7 +210,7 @@ namespace OpenDental{
 				labelAmtOriginal.Text=(0).ToString("c");
 				labelPositiveAdjs.Text=(0).ToString("c");
 				labelNegativeAdjs.Text=(0).ToString("c");
-				labelPayPlanCredits.Text=(0).ToString("c");
+				labelPayPlanProduction.Text=(0).ToString("c");
 				labelPaySplits.Text=(0).ToString("c");
 				labelInsEst.Text=(0).ToString("c");
 				labelInsPay.Text=(0).ToString("c");
@@ -228,7 +228,7 @@ namespace OpenDental{
 			labelAmtOriginal.Text=    listProcExtendeds.Sum(x => x.AmountOriginal).ToString("c");
 			labelPositiveAdjs.Text=   decimalPosAdjAmt.ToString("c");
 			labelNegativeAdjs.Text=   listProcExtendeds.Sum(x => x.NegativeAdjTotals).ToString("c");
-			labelPayPlanCredits.Text= (-listProcExtendeds.Sum(x => x.PayPlanCreditTotal)).ToString("c");
+			labelPayPlanProduction.Text= (-listProcExtendeds.Sum(x => x.PayPlanCreditTotal)).ToString("c");
 			labelPaySplits.Text=      (-listProcExtendeds.Sum(x => x.PaySplitTotal)).ToString("c");
 			labelInsEst.Text=         (-listProcExtendeds.Sum(x => x.InsEstTotal)).ToString("c");
 			labelInsPay.Text=         (-listProcExtendeds.Sum(x => x.InsPayTotal)).ToString("c");

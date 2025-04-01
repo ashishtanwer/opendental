@@ -33,7 +33,7 @@ namespace OpenDental {
 			this.textAttachmentID = new OpenDental.ODtextBox();
 			this.butClear = new OpenDental.UI.Button();
 			this.labelCharCount = new System.Windows.Forms.Label();
-			this.buttonDeleteImageAttachments = new OpenDental.UI.Button();
+			this.labelRemoveAttachment = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// gridMain
@@ -149,20 +149,20 @@ namespace OpenDental {
 			this.labelCharCount.Text = "/2000";
 			this.labelCharCount.TextAlign = System.Drawing.ContentAlignment.BottomRight;
 			// 
-			// buttonDeleteImageAttachments
+			// labelRemoveAttachment
 			// 
-			this.buttonDeleteImageAttachments.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonDeleteImageAttachments.Location = new System.Drawing.Point(277, 494);
-			this.buttonDeleteImageAttachments.Name = "buttonDeleteImageAttachments";
-			this.buttonDeleteImageAttachments.Size = new System.Drawing.Size(90, 24);
-			this.buttonDeleteImageAttachments.TabIndex = 59;
-			this.buttonDeleteImageAttachments.Text = "Delete Images";
-			this.buttonDeleteImageAttachments.Click += new System.EventHandler(this.buttonDeleteImageAttachments_Click);
+			this.labelRemoveAttachment.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.labelRemoveAttachment.Location = new System.Drawing.Point(11, 489);
+			this.labelRemoveAttachment.Name = "labelRemoveAttachment";
+			this.labelRemoveAttachment.Size = new System.Drawing.Size(356, 32);
+			this.labelRemoveAttachment.TabIndex = 61;
+			this.labelRemoveAttachment.Text = "Images are unable to be removed from a sent attachment. Use the Clear Attachment " +
+    "button to start a new attachment.";
 			// 
 			// FormClaimAttachHistory
 			// 
 			this.ClientSize = new System.Drawing.Size(656, 530);
-			this.Controls.Add(this.buttonDeleteImageAttachments);
+			this.Controls.Add(this.labelRemoveAttachment);
 			this.Controls.Add(this.labelCharCount);
 			this.Controls.Add(this.butClear);
 			this.Controls.Add(this.textAttachmentID);
@@ -191,6 +191,6 @@ namespace OpenDental {
 		private ODtextBox textAttachmentID;
 		private UI.Button butClear;
 		private System.Windows.Forms.Label labelCharCount;
-		private UI.Button buttonDeleteImageAttachments;
+		private System.Windows.Forms.Label labelRemoveAttachment;
 	}
 }

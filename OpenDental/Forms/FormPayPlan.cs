@@ -854,7 +854,7 @@ namespace OpenDental{
 		}
 
 		private void butCloseOut_Click(object sender,EventArgs e) {
-			if(HasErrors(allowNoCharges:true)) {
+			if(HasErrors(allowNoCharges:true,isClosingPlan:true)) {
 				return;
 			}
 			bool shouldClosePlan;
@@ -906,7 +906,7 @@ namespace OpenDental{
 			DialogResult=DialogResult.OK;
 		}
 
-		private bool HasErrors(bool allowNoCharges=false) {
+		private bool HasErrors(bool allowNoCharges=false,bool isClosingPlan=false) {
 			if(!textDate.IsValid() || !textCompletedAmt.IsValid()) {
 				MsgBox.Show(this,"Please fix data entry errors first.");
 				return true;
@@ -923,7 +923,7 @@ namespace OpenDental{
 				MsgBox.Show(this,"Payment plan date cannot be set for the future.");
 				return true;
 			}
-			if(Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,PIn.Date(textDate.Text))) {
+			if(!isClosingPlan && Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,PIn.Date(textDate.Text))) {
 				return true;
 			}
 			return false;
@@ -1341,6 +1341,9 @@ namespace OpenDental{
 		}
 
 		private void butDelete_Click(object sender,System.EventArgs e) {
+			if(Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,PIn.Date(textDate.Text))) {
+				return;
+			}
 			if(!MsgBox.Show(this,MsgBoxButtons.OKCancel,"Delete payment plan? All debits and credits will also be deleted, and all recurring charges associated to the payment plan will stop and their settings will be cleared.")) {
 				return;
 			}

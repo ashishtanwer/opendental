@@ -17,6 +17,7 @@
 				if(_bitmapArrayShowing!=null && _bitmapArrayShowing.Length>0){
 					for(int i=0;i<_bitmapArrayShowing.Length;i++){
 						_bitmapArrayShowing[i]?.Dispose();
+						_bitmapArrayShowing[i]=null;
 					}
 				}
 			}

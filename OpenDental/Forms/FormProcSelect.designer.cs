@@ -33,7 +33,7 @@
 		private System.Windows.Forms.Label labelInsPay;
 		private System.Windows.Forms.Label labelNegativeAdjs;
 		private System.Windows.Forms.Label label7;
-		private System.Windows.Forms.Label labelPayPlanCredits;
+		private System.Windows.Forms.Label labelPayPlanProduction;
 		private System.Windows.Forms.Label label5;
 		#endregion
 
@@ -88,7 +88,7 @@
 			this.labelInsPay = new System.Windows.Forms.Label();
 			this.labelNegativeAdjs = new System.Windows.Forms.Label();
 			this.label7 = new System.Windows.Forms.Label();
-			this.labelPayPlanCredits = new System.Windows.Forms.Label();
+			this.labelPayPlanProduction = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.labelUnallocated = new System.Windows.Forms.Label();
 			this.groupCreditLogic.SuspendLayout();
@@ -189,7 +189,7 @@
 			this.groupBreakdown.Controls.Add(this.labelInsPay);
 			this.groupBreakdown.Controls.Add(this.labelNegativeAdjs);
 			this.groupBreakdown.Controls.Add(this.label7);
-			this.groupBreakdown.Controls.Add(this.labelPayPlanCredits);
+			this.groupBreakdown.Controls.Add(this.labelPayPlanProduction);
 			this.groupBreakdown.Controls.Add(this.label5);
 			this.groupBreakdown.Location = new System.Drawing.Point(694, 76);
 			this.groupBreakdown.Name = "groupBreakdown";
@@ -390,14 +390,14 @@
 			this.label7.Text = "Negative Adjs:";
 			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
-			// labelPayPlanCredits
+			// labelPayPlanProduction
 			// 
-			this.labelPayPlanCredits.Location = new System.Drawing.Point(99, 84);
-			this.labelPayPlanCredits.Name = "labelPayPlanCredits";
-			this.labelPayPlanCredits.Size = new System.Drawing.Size(61, 18);
-			this.labelPayPlanCredits.TabIndex = 20;
-			this.labelPayPlanCredits.Text = "0.00";
-			this.labelPayPlanCredits.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.labelPayPlanProduction.Location = new System.Drawing.Point(99, 84);
+			this.labelPayPlanProduction.Name = "labelPayPlanProduction";
+			this.labelPayPlanProduction.Size = new System.Drawing.Size(61, 18);
+			this.labelPayPlanProduction.TabIndex = 20;
+			this.labelPayPlanProduction.Text = "0.00";
+			this.labelPayPlanProduction.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// label5
 			// 
@@ -405,7 +405,7 @@
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(86, 18);
 			this.label5.TabIndex = 21;
-			this.label5.Text = "PayPlan Credits:";
+			this.label5.Text = "PayPlan Prod:";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// labelUnallocated

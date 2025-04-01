@@ -1106,7 +1106,7 @@ Here is the desired behavior:
 				DownloadDocumentNoteFile(nodeTypeAndKey);
 				if(_bitmapRaw==null && _bitmapDicomRaw==null) {
 					panelMain.Visible=false;
-					if(ImageHelper.HasImageExtension(document.FileName)) {
+					if(ImageHelper.HasImageExtension(document.FileName) || Path.GetExtension(document.FileName).ToLower()==".dcm") {
 						string srcFileName = ODFileUtils.CombinePaths(PatFolder,document.FileName);
 						if(File.Exists(srcFileName)) {
 							MessageBox.Show(Lan.g(this,"File found but cannot be opened, probably because it's too big:")+srcFileName);
@@ -1124,7 +1124,7 @@ Here is the desired behavior:
 				ImageHelper.ConvertCropIfNeeded(document,_bitmapRaw);
 				SetWindowingSlider();
 				EnableToolBarButtons();
-				CreateDocumentThumbnail();
+				CreateDocumentThumbnail();//The thumbnail created here will remain even after an import is cancelled
 				EventSetCropPanEditAdj?.Invoke(this,EnumCropPanAdj.Pan);
 			}
 			if(nodeTypeAndKey.NodeType==EnumImageNodeType.Mount){
@@ -3830,16 +3830,19 @@ Here is the desired behavior:
 			using Bitmap bitmap=new Bitmap(100,100);
 			using Graphics g=Graphics.FromImage(bitmap);
 			g.TranslateTransform(50,50);//Center
-			//scale it slightly smaller so that the right pixels won't get cut off
+			g.InterpolationMode=InterpolationMode.HighQualityBicubic;
+			g.CompositingQuality=CompositingQuality.HighQuality;
+			g.SmoothingMode=SmoothingMode.HighQuality;
+			g.PixelOffsetMode=PixelOffsetMode.HighQuality;
 			if(bitmapOriginal.Height==0) {
 				return;
 			}
 			float scale;
 			if(document.CropW>0 || document.CropH>0) {//If image is cropped, scale based upon the cropped section
-				scale=ImageTools.CalcScaleFit(new Size(99,99),new Size(document.CropW,document.CropH),0);
+				scale=ImageTools.CalcScaleFit(new Size(100,100),new Size(document.CropW,document.CropH),0);
 			}
 			else {
-				scale=ImageTools.CalcScaleFit(new Size(99,99),new Size(bitmapOriginal.Width,bitmapOriginal.Height),0);
+				scale=ImageTools.CalcScaleFit(new Size(100,100),new Size(bitmapOriginal.Width,bitmapOriginal.Height),0);
 			}
 			g.ScaleTransform(scale,scale);
 			DrawDocument(g);
@@ -5048,6 +5051,8 @@ Here is the desired behavior:
 					DeleteDocument(isVerbose:false,doSecurityCheck:false,document);
 					//Refresh tree after cancelling import
 					EventFillTree?.Invoke(this,false);
+					//Clears the image display after cancelling import
+					EventSelectTreeNode?.Invoke(this,null);
 					ClearObjects();
 					SelectTreeNode2(null);
 					panelMain.Invalidate();

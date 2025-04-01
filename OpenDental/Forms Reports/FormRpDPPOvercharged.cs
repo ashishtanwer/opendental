@@ -286,6 +286,7 @@ namespace OpenDental {
 					PIn.Long(dataRow["FKey"].ToString()),
 					PIn.Enum<PayPlanLinkType>(dataRow["LinkType"].ToString())
 				);
+				payPlanChargeOffset.IsOffset=true;
 				listChargesToInsert.Add(payPlanChargeOffset);
 			}
 			PayPlanCharges.InsertMany(listChargesToInsert);

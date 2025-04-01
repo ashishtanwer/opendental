@@ -2846,8 +2846,13 @@ namespace OpenDentBusiness {
 				//detail rows-------------------------------------------------------------------------------
 				rawAmort=GetPayPlanAmortTable(payPlanNum);
 				//remove future entries, going backwards
-				for(int d=rawAmort.Rows.Count-1;d>=0;d--) {
-					if((DateTime)rawAmort.Rows[d]["DateTime"]>toDate.AddDays(PrefC.GetLong(PrefName.PayPlansBillInAdvanceDays))) {
+				for(int d=rawAmort.Rows.Count-1;d>=0;d--){
+					if(!isForDynamic){//PayPlansBillInAdvanceDays can't be used w/ DPP
+						if((DateTime)rawAmort.Rows[d]["DateTime"]>toDate.AddDays(PrefC.GetLong(PrefName.PayPlansBillInAdvanceDays))) {
+							rawAmort.Rows.RemoveAt(d);
+						}
+					}
+					else if((DateTime)rawAmort.Rows[d]["DateTime"]>toDate){
 						rawAmort.Rows.RemoveAt(d);
 					}
 				}

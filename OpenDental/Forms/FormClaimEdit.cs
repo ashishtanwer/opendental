@@ -127,21 +127,6 @@ namespace OpenDental{
 
 		private void FormClaimEdit_Shown(object sender,EventArgs e) {
 			List<ClaimProc> listClaimProcsForClaim=_listClaimProcsForClaim.ToList();
-			if(PrefC.GetBool(PrefName.ClaimEditRequireNoMissingData) && IsNew){//We only really care about new claims
-				ClaimSendQueueItem[] claimSendQueueItemArray=Claims.GetQueueList(_claim.ClaimNum,_claim.ClinicNum,_claim.CustomTracking);
-				//GetMissingData() guards around null, so if somehow we don't have a claim here we pass in null. ElementAtOrDefault will pass in null if there is no 0 index somehow.
-				ClaimSendQueueItem claimSendQueueItem = Eclaims.GetMissingData(_clearinghouse,claimSendQueueItemArray.ElementAtOrDefault(0),true);
-				if(!claimSendQueueItem.MissingData.IsNullOrEmpty() && (_claim.ClaimType!="PreAuth")){//Skip validation for pre-auths if they get a claim identifier warning since they won't have a claim identifier yet, which counts as missing data, but is fixed inside of this window.
-					MsgBox.Show("Cannot create claim due to missing data. The claim has the following errors: "+claimSendQueueItem.MissingData);
-					//Delete the pre-inserted claim and "reset" the procedures on the claim back to normal
-					Claims.Delete(_claim);
-					DeleteClaimHelper();
-					DialogResult=DialogResult.Cancel;
-					_claim=null;//Skip the FormClosing code since we need DialogResult.Cancel.
-					this.Close();
-					return;
-				}
-			}
 			EnumAutomationTrigger automationTrigger=EnumAutomationTrigger.ClaimOpen;
 			if(IsNew) {
 				automationTrigger=EnumAutomationTrigger.ClaimCreate;
@@ -2501,24 +2486,30 @@ namespace OpenDental{
 			contrPerioGrid.ListPerioMeasures=PerioMeasures.GetForPatient(_patient.PatNum);
 			contrPerioGrid.IdxExamSelected=contrPerioGrid.ListPerioExams.Count-1;
 			contrPerioGrid.LoadData();
-			using Bitmap bitmap=new Bitmap(602,665);
+			using Bitmap bitmap=new Bitmap(LayoutManager.Scale(602),LayoutManager.Scale(665));
+			bitmap.SetResolution(96,96);
 			Graphics g=Graphics.FromImage(bitmap);
 			contrPerioGrid.DrawChart(g);
 			g.Dispose();
-			using Bitmap bitmapBig=new Bitmap(602,715);
+			using Bitmap bitmapBig=new Bitmap(LayoutManager.Scale(602),LayoutManager.Scale(715));
+			bitmapBig.SetResolution(96,96);
 			g=Graphics.FromImage(bitmapBig);
 			g.Clear(Color.White);
+			g.CompositingQuality=System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+			g.InterpolationMode=System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.SmoothingMode=System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+			g.TextRenderingHint=System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
 			string text=_patient.GetNameFL();
-			Font font=new Font("Microsoft Sans Serif",12,FontStyle.Bold);
-			g.DrawString(text,font,Brushes.Black,602/2-g.MeasureString(text,font).Width/2,5);
+			Font font=new Font("Microsoft Sans Serif",LayoutManager.ScaleFontODZoom(12),FontStyle.Bold);
+			g.DrawString(text,font,Brushes.Black,bitmap.Width/2-g.MeasureString(text,font).Width/2,5);
 			text=PrefC.GetString(PrefName.PracticeTitle);
-			font=new Font("Microsoft Sans Serif",9,FontStyle.Bold);
-			g.DrawString(text,font,Brushes.Black,602/2-g.MeasureString(text,font).Width/2,28);
+			font=new Font("Microsoft Sans Serif",LayoutManager.ScaleFontODZoom(9),FontStyle.Bold);
+			g.DrawString(text,font,Brushes.Black,bitmap.Width/2-g.MeasureString(text,font).Width/2,28);
 			g.DrawImage(bitmap,0,50);
 			g.Dispose();
 			Random rnd=new Random();
 			string newName=DateTime.Now.ToString("yyyyMMdd")+"_"+DateTime.Now.TimeOfDay.Ticks.ToString()+rnd.Next(1000).ToString()+".jpg";
-			string attachPath=EmailAttaches.GetAttachPath();
+			string attachPath=EmailAttaches.GetAttachPath(); 
 			string newPath=ODFileUtils.CombinePaths(attachPath,newName);
 			if(CloudStorage.IsCloudStorage) {
 				UI.ProgressWin progressWin=new UI.ProgressWin();
@@ -2832,7 +2823,11 @@ namespace OpenDental{
 			if(!Security.IsAuthorized(EnumPermType.ClaimSend)) {
 				return;
 			}
+			if(!ClaimIsValid()) {
+				return;
+			}
 			DateTime dateTimeClaimCurSectEdit=_claim.SecDateTEdit;//Preserve the date prior to any claim updates effecting it.
+			UpdateClaim();
 			ClaimSendQueueItem[] claimSendQueueItemsArrayCA=Claims.GetQueueList(_claim.ClaimNum,_claim.ClinicNum,0);
 			long clinicNum=0;
 			if(PrefC.HasClinicsEnabled) {
@@ -3882,80 +3877,13 @@ namespace OpenDental{
 					}
 				}
 			}
-			DeleteClaimHelper(listETrans835Attaches);
+			ClaimL.DeleteClaimHelper(_claim,listETrans835Attaches);
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimDelete,_claim.PatNum,_patient.GetNameLF()
 				+", "+Lan.g(this,"Date Entry")+": "+_claim.SecDateEntry.ToShortDateString()
 				+", "+Lan.g(this,"Date of Service")+": "+_claim.DateService.ToShortDateString(),
 				_claim.ClaimNum,dateTimeClaimCurSectEdit);
 			_isDeleting=true;
 			SaveCleanup();
-		}
-
-		///<summary>This window is complicated and can do many things. Therefore, we pre-insert the claim and other associated entities.
-		///This helper method does all of the work necessary to clean up after all of said entities and deletes the claim as well.
-		///If ClaimType is 'PreAuth' or 'Cap', claimprocs will be deleted. Otherwise, all pay-as-total and supplemental claimprocs
-		///are deleted, and all other claimprocs are returned to estimate status, their ClaimNum is set to zero, we run 
-		///ClaimProcs.ComputeBaseEstimates() for them, and they are updated to the DB. Any claimprocs associated to dropped patplans are deleted. 
-		///Canadian lab claimprocs have their status synced with parent claimprocs and are ommitted when running ClaimProcs.ComputeBaseEstimates()
-		///as their estimates are calculated when ClaimProcs.ComputeBaseEstimates() is called for thier parent claimprocs.
-		///It is okay to default list835Attaches to null if this is called when cancelling a new claim as none should exist.</summary>
-		private void DeleteClaimHelper(List<long> list835Attaches=null) {
-			if(_claim.ClaimType=="PreAuth"//all preauth claimprocs are just duplicates
-				|| _claim.ClaimType=="Cap") //all cap claimprocs are just duplicates
-			{
-				ClaimProcs.DeleteMany(_listClaimProcsForClaim);
-			}
-			else {//all other claim types use original estimate claimproc.
-				List<Benefit> listBenefits=Benefits.Refresh(_listPatPlans,_listInsSubs);
-				InsPlan insPlan=InsPlans.GetPlan(_claim.PlanNum,_listInsPlans);
-				for(int i=0;i<_listClaimProcsForClaim.Count;i++) {
-					if(_listClaimProcsForClaim[i].Status==ClaimProcStatus.Supplemental//supplementals are duplicate
-						|| _listClaimProcsForClaim[i].ProcNum==0//total payments get deleted
-						|| _listClaimProcsForClaim[i].IsOverpay)//Overpayment proc claims also get deleted
-					{
-						ClaimProcs.Delete(_listClaimProcsForClaim[i]);
-						continue;
-					}
-					//so only changed back to estimate if attached to a proc
-					_listClaimProcsForClaim[i].Status=ClaimProcStatus.Estimate;
-					//already handled the case where claimproc.ProcNum=0 for payments etc. above
-					Procedure procedure=Procedures.GetProcFromList(_listProcedures,_listClaimProcsForClaim[i].ProcNum);
-					List<ClaimProc> listClaimProcsForLab=GetListClaimProcsForProcNumLabsParent(procedure.ProcNum);//Get any potential Claimprocs for the Proc "i"
-					if(listClaimProcsForLab.Count!=0) {//And proc "i" has labs. 
-						for(int j=0;j<listClaimProcsForLab.Count;j++) {//Foreach lab
-							listClaimProcsForLab[j].Status=_listClaimProcsForClaim[i].Status;//Match to parent status so estimates for ClaimProcs.CanadianLabBaseEstHelper().
-							ClaimProcs.Update(listClaimProcsForLab[j]);//Both parent procs and labs need to have their statuses in synch when ComputeBaseEst
-						}
-					}
-					_listClaimProcsForClaim[i].ClaimNum=0;
-					if(procedure.ProcNumLab!=0) {
-						//Skip lab procedures because their parent will handle their estimate updates below (including the status and claimNum set above).
-						continue;
-					}
-					PatPlan patPlan=_listPatPlans.FirstOrDefault(x => x.InsSubNum==_listClaimProcsForClaim[i].InsSubNum);
-					if(patPlan==null) {
-						continue;
-					}
-					if(patPlan.Ordinal==1) {
-						ClaimProcs.ComputeBaseEst(_listClaimProcsForClaim[i],procedure,insPlan,patPlan.PatPlanNum,listBenefits,null,null,_listPatPlans,0,0,_patient.Age,0
-							,_listInsPlans,_listInsSubs,ListSubstitutionLinks,false,null,blueBookEstimateData:GetBlueBookEstimateData());
-					}
-					else {
-						//We're not going to bother to also get paidOtherInsBaseEst:
-						double paidOtherInsTotal=ClaimProcs.GetPaidOtherInsTotal(_listClaimProcsForClaim[i],_listPatPlans);
-						double writeOffOtherIns=ClaimProcs.GetWriteOffOtherIns(_listClaimProcsForClaim[i],_listPatPlans);
-						ClaimProcs.ComputeBaseEst(_listClaimProcsForClaim[i],procedure,insPlan,patPlan.PatPlanNum,listBenefits,null,null,_listPatPlans,paidOtherInsTotal
-							,paidOtherInsTotal,_patient.Age,writeOffOtherIns,_listInsPlans,_listInsSubs,ListSubstitutionLinks,false,null,blueBookEstimateData:GetBlueBookEstimateData());
-					}
-					InsBlueBookLog insBlueBookLog=GetBlueBookEstimateData().CreateInsBlueBookLog(_listClaimProcsForClaim[i]);
-					if(insBlueBookLog!=null) {
-						InsBlueBookLogs.Insert(insBlueBookLog);
-					}
-					ClaimProcs.Update(_listClaimProcsForClaim[i]);
-				}
-			}
-			ClaimProcs.DeleteEstimatesForDroppedPatPlan(_listClaimProcsForClaim);
-			Claims.Delete(_claim,list835Attaches);
 		}
 
 		private bool AreAllReceived() {
@@ -4018,6 +3946,7 @@ namespace OpenDental{
 			if(_claimOld.ClaimStatus=="S" || claim.ClaimStatus!="S") {
 				return false;
 			}
+			bool isReceived=false;
 			if(Claims.ReceiveAsNoPaymentIfNeeded(claim.ClaimNum)) {
 				//The method above changes and updates the claim and claimprocs.
 				//Refresh them for use in closing method.
@@ -4028,12 +3957,12 @@ namespace OpenDental{
 				_isPaymentEntered=true;
 				comboClaimStatus.SelectedIndex=_listClaimStatuses.IndexOf(ClaimStatus.Received);
 				textDateRec.Text=DateTime.Today.ToShortDateString();
-				return true;
+				isReceived=true;
 			}
 			if(_canadianSecondaryClaimNum!=0) {
-				return Claims.ReceiveAsNoPaymentIfNeeded(_canadianSecondaryClaimNum);
+				isReceived=Claims.ReceiveAsNoPaymentIfNeeded(_canadianSecondaryClaimNum);
 			}
-			return false;
+			return isReceived;
 		}
 
 		///<summary>We have to set _blueBookEstimateData to null when _listClaimProcsForClaim is assigned because we may not have all of the
@@ -4274,7 +4203,7 @@ namespace OpenDental{
 			//This is a new claim where they clicked "Cancel".
 			SecurityLogs.MakeLogEntry(EnumPermType.ClaimEdit,_patient.PatNum,"New claim cancelled for "+_patient.LName+","+_patient.FName,
 				_claim.ClaimNum,dateTimeClaimSecEdit);
-			DeleteClaimHelper();
+			ClaimL.DeleteClaimHelper(_claim);
 			InsBlueBooks.DeleteByClaimNums(_claim.ClaimNum);
 			//When the user "cancels" out of a new claim we want to delete any corresponding claim snapshots, but only if not using the service trigger type
 			//The service trigger type snapshots have nothing to do with creating this claim, so leave as is.

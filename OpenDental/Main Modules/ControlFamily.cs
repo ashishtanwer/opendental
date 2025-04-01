@@ -2504,6 +2504,9 @@ namespace OpenDental{
 						else if(benefitMatrix[x,y].CovCatNum != 0) {
 							strVal+=CovCats.GetDesc(benefitMatrix[x,y].CovCatNum)+" ";
 						}
+						else if(benefitMatrix[x,y].CodeGroupNum != 0) {
+							strVal+=CodeGroups.GetGroupName(benefitMatrix[x,y].CodeGroupNum)+" ";
+						}
 					}
 					if(benefitMatrix[x,y].QuantityQualifier==BenefitQuantity.NumberOfServices) {//eg 2 times per CalendarYear
 						if(benefitMatrix[x,y].TimePeriod==BenefitTimePeriod.NumberInLast12Months) {
@@ -2760,7 +2763,7 @@ namespace OpenDental{
 		#endregion Methods - Private - GridIns
 
 		#region Methods - Private - Patient Clones
-		private void FillGridPatientClones(bool initOnly=false) {
+		private void FillGridPatientClones() {
 			gridPatientClones.BeginUpdate();
 			gridPatientClones.Columns.Clear();
 			gridPatientClones.Columns.Add(new GridColumn(Lan.g(gridPatientClones.TranslationName,"Name"),150));
@@ -2769,7 +2772,7 @@ namespace OpenDental{
 			}
 			gridPatientClones.Columns.Add(new GridColumn(Lan.g(gridPatientClones.TranslationName,"Specialty"),150){ IsWidthDynamic=true });
 			gridPatientClones.ListGridRows.Clear();
-			if(_patient==null || initOnly) {
+			if(_patient==null) {
 				gridPatientClones.EndUpdate();
 				return;
 			}
@@ -3057,7 +3060,6 @@ namespace OpenDental{
 						widthSuperFam=DisplayFields.GetForCategory(DisplayFieldCategory.SuperFamilyGridCols).Sum(x => x.ColumnWidth);
 					}
 					if(showPatientCloneGrid) {
-						FillGridPatientClones(initOnly:true);//Make sure we actually have columns to count.
 						widthClones=gridPatientClones.Columns.Sum(x => x.ColWidth);
 					}
 					int widthFinal=Math.Max(widthSuperFam,widthClones)+SystemInformation.VerticalScrollBarWidth;

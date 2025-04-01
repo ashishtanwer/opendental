@@ -35,8 +35,8 @@ namespace OpenDental {
 
 		#region Event Handlers
 		private void FormMessageToPayEdit_Load(object sender,EventArgs e) {
-			LoadMessageTemplates();
 			_clinic=Clinics.GetClinicOrSmsDefaultOrPracticeClinic(_patient.ClinicNum);
+			LoadMessageTemplates();
 			_patComm=Patients.GetPatComms(ListTools.FromSingle(_patient.PatNum),_clinic).FirstOrDefault();
 			checkText.Enabled=_patComm.IsSmsAnOption && SmsPhones.IsIntegratedTextingEnabled();
 			checkEmail.Enabled=_patComm.IsEmailAnOption;
@@ -225,7 +225,18 @@ namespace OpenDental {
 				_msgToPayEmailTemplate=new MsgToPayEmailTemplate();
 				_msgToPayEmailTemplate.Template="";
 			}
-			_msgToPayEmailHtmlText=_msgToPayEmailTemplate.Template;
+			if(_msgToPayEmailTemplate.EmailType == EmailType.RawHtml) {
+				_msgToPayEmailHtmlText=_msgToPayEmailTemplate.Template;
+			}
+			else {//Html (uses the supplied OD master template) (EmailType.Regular not used here)
+				try {
+					_msgToPayEmailHtmlText=MarkupEdit.TranslateToXhtml(_msgToPayEmailTemplate.Template,isPreviewOnly:true,hasWikiPageTitles:false,isEmail:true);
+				}
+				catch {
+					MsgBox.Show("An error occurred while loading the email template. Please fix the template in the eServices payment portal setup window.");
+					DialogResult=DialogResult.Cancel;
+				}
+			}
 			_msgToPayTextTemplate=PrefC.GetString(PrefName.PaymentPortalMsgToPayTextMessageTemplate);
 			_msgToPayTextTemplate=_msgToPayTagReplacer.ReplaceTags(_msgToPayTextTemplate,msgToPayLite,_clinic,false);
 			textSubject.Text=_emailSubject;

@@ -28,9 +28,8 @@ namespace OpenDentBusiness{
 				+"FROM etrans "
 				+"LEFT JOIN carrier ON etrans.CarrierNum=carrier.CarrierNum "
 				+"LEFT JOIN patient ON patient.PatNum=etrans.PatNum "
-				+"LEFT JOIN clearinghouse ON clearinghouse.ClearinghouseNum=etrans.ClearinghouseNum WHERE "
-				+DbHelper.DtimeToDate("DateTimeTrans")+" >= "+POut.Date(dateFrom)+" AND "
-				+DbHelper.DtimeToDate("DateTimeTrans")+" <= "+POut.Date(dateTo)+" "
+				+"LEFT JOIN clearinghouse ON clearinghouse.ClearinghouseNum=etrans.ClearinghouseNum "
+				+"WHERE "+DbHelper.BetweenDates("DateTimeTrans",dateFrom,dateTo)+" "
 				+"AND Etype IN ("+POut.Long((int)listEtransType[0]);
 				for(int i=1;i<listEtransType.Count;i++){//String.Join doesn't work because there's no way to cast the enums to ints in the function, db uses longs.
 					command+=", "+POut.Long((int)listEtransType[i]);

@@ -75,6 +75,10 @@ namespace OpenDentBusiness {
 			if(amountOriginal==decimal.MinValue) {
 				decimal patPortion=ClaimProcs.GetPatPortion(proc,listClaimProcs,listAdjustments);
 				if(proc.ProcStatus==ProcStat.TP) {
+					//Completed procedures have adjustments that account for sales tax, but TP procs need it added here
+					if(PrefC.GetBool(PrefName.SalesTaxDoAutomate)) {
+						patPortion+=(decimal)ClaimProcs.ComputeSalesTax(proc,listClaimProcs,isEstimate:true);
+					}
 					patPortion-=(decimal)proc.DiscountPlanAmt;
 					patPortion-=(decimal)proc.Discount;
 				}

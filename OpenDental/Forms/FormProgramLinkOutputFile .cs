@@ -24,14 +24,13 @@ namespace OpenDental {
 			textPath.Text=_program.FilePath;
 		}
 
-		private void butImport_Click(object sender,EventArgs e) {
+		private void butBrowse_Click(object sender,EventArgs e) {
 			string[] stringArrayFileNames;
 			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
-				List<string> listImportFilePaths=ODCloudClient.ImportFileForCloud();
-				if(listImportFilePaths.IsNullOrEmpty()) {
+				stringArrayFileNames=new string[]{ODCloudClient.GetFileFolderPath()};
+				if(stringArrayFileNames[0].IsNullOrEmpty()) {
 					return;
 				}
-				stringArrayFileNames=listImportFilePaths.ToArray();
 			}
 			else {
 				OpenFileDialog openFileDialog=new OpenFileDialog();

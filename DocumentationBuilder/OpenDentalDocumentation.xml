@@ -881,9 +881,9 @@
       <summary>Enum:EmailType The type of email for the aggregated template. </summary>
       <Enumeration name="EmailType">
         <summary></summary>
-        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup.</EnumValue>
-        <EnumValue name="Html">1 - Html. Basic html email which uses the master template.</EnumValue>
-        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template, user must provide everything.</EnumValue>
+        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup. Not converted to html.</EnumValue>
+        <EnumValue name="Html">1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</EnumValue>
+        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template. User must provide everything.</EnumValue>
       </Enumeration>
     </column>
     <column order="23" name="IsSendForMinorsBirthday" type="tinyint(4)">
@@ -1232,9 +1232,9 @@
       <summary>Enum:EmailType Type of markup for the template.</summary>
       <Enumeration name="EmailType">
         <summary></summary>
-        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup.</EnumValue>
-        <EnumValue name="Html">1 - Html. Basic html email which uses the master template.</EnumValue>
-        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template, user must provide everything.</EnumValue>
+        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup. Not converted to html.</EnumValue>
+        <EnumValue name="Html">1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</EnumValue>
+        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template. User must provide everything.</EnumValue>
       </Enumeration>
     </column>
   </table>
@@ -6498,9 +6498,9 @@
       <summary>Enum:EmailType The type of email template this is (Regular HTML or Full HTML)</summary>
       <Enumeration name="EmailType">
         <summary></summary>
-        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup.</EnumValue>
-        <EnumValue name="Html">1 - Html. Basic html email which uses the master template.</EnumValue>
-        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template, user must provide everything.</EnumValue>
+        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup. Not converted to html.</EnumValue>
+        <EnumValue name="Html">1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</EnumValue>
+        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template. User must provide everything.</EnumValue>
       </Enumeration>
     </column>
     <column order="8" name="TemplateType" type="varchar(255)">
@@ -6609,9 +6609,9 @@
       <summary>Enum:EmailType </summary>
       <Enumeration name="EmailType">
         <summary></summary>
-        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup.</EnumValue>
-        <EnumValue name="Html">1 - Html. Basic html email which uses the master template.</EnumValue>
-        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template, user must provide everything.</EnumValue>
+        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup. Not converted to html.</EnumValue>
+        <EnumValue name="Html">1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</EnumValue>
+        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template. User must provide everything.</EnumValue>
       </Enumeration>
     </column>
     <column order="18" name="SecDateTEntry" type="datetime">
@@ -6750,9 +6750,9 @@
       <summary>Enum:EmailType </summary>
       <Enumeration name="EmailType">
         <summary></summary>
-        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup.</EnumValue>
-        <EnumValue name="Html">1 - Html. Basic html email which uses the master template.</EnumValue>
-        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template, user must provide everything.</EnumValue>
+        <EnumValue name="Regular">0 - This is a regular email that may contain our special wiki markup. Not converted to html.</EnumValue>
+        <EnumValue name="Html">1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</EnumValue>
+        <EnumValue name="RawHtml">2 - More advanced html that does not include the master template. User must provide everything.</EnumValue>
       </Enumeration>
     </column>
   </table>

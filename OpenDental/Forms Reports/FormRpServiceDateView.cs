@@ -51,7 +51,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Patient"),150));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Reference"),220));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Charge"),80,HorizontalAlignment.Right));
-			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Credit"),80,HorizontalAlignment.Right));
+			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Production"),80,HorizontalAlignment.Right));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"Prov"),80));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"InsBal"),80,HorizontalAlignment.Right));
 			gridMain.Columns.Add(new GridColumn(Lan.g(this,"AcctBal"),80,HorizontalAlignment.Right));
@@ -73,6 +73,10 @@ namespace OpenDental {
 					string toothNum=strReference.Substring(strReference.IndexOf('#')+1,strReference.IndexOf('-')-strReference.IndexOf('#')-1);
 					string toothNumNom=Tooth.Display(toothNum,(ToothNumberingNomenclature)toothNumPref);
 					strReference=strReference.Replace("#"+toothNum+"-","#"+toothNumNom+"-");
+				}
+				//change here instead of in RpServiceDateView.GetData because that's used in the API
+				if(strReference=="PayPlan Credit") {
+					strReference="PayPlan Production";
 				}
 				newRow.Cells.Add(strReference);
 				bool isUnallocated=strReference.ToLower().Contains("unallocated");

@@ -208,7 +208,7 @@ namespace OpenDental {
 				}
 			}
 			else if(radioWebService.Checked) {
-				if(radioSale.Checked) {
+				if(radioSale.Checked && _payConnect2Response.ErrorResponse==null) {
 					if(amountInCents < 0) {
 						MsgBox.Show(this,"Amount must be greater than 0.00");
 						return false;
@@ -281,6 +281,9 @@ namespace OpenDental {
 				}	
 			}
 			_response=PayConnect2.ApiResponseToPayConnectResponse(_payConnect2Response);
+			if(_response.TransType==PayConnectResponse.TransactionType.Unknown) {
+				return true;
+			}
 			bool doShowSignatureLine=true;
 			if(TransType==transType.SALE || TransType==transType.AUTH || TransType==transType.RETURN) {
 				PayConnect2Response signatureResponse=SendSignature();
@@ -469,6 +472,12 @@ namespace OpenDental {
 					_payConnect2Response=GetTransactionStatus(_clinicNum,response.Response.ReferenceId);
 				}
 				butRefresh.Enabled=false;
+			}
+			if(response!=null && response.IFrameStatus.ToLower()=="error") {
+				_payConnect2Response.ResponseType=ResponseType.Error;
+				_payConnect2Response.ErrorResponse=new ErrorResponse();
+				_payConnect2Response.ErrorResponse.ErrorType=ErrorType.Response;
+				_payConnect2Response.ErrorResponse.Error=(string)response.Response.Message;
 			}
 		}
 		

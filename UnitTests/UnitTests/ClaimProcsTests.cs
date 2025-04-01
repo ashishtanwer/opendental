@@ -218,7 +218,7 @@ namespace UnitTests.ClaimProcs_Tests {
 			string procStr="D2740";
 			ProcedureCode procedureCode=ProcedureCodeT.CreateProcCode(procStr);
 			//Add an insurance with the corresponding fee schedule
-			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,suffix,"p",feeSchedNumOutNetwork);
+			InsuranceInfo insuranceInfo=InsuranceT.AddInsurance(patient,suffix,"p",feeSchedNumOutNetwork,allowedFeeSchedNum:feeSchedNumOutNetwork);
 			Benefit benefit=BenefitT.CreateBenefit(insuranceInfo.PriInsPlan.PlanNum,insuranceInfo.PriPatPlan.PatPlanNum,insBenefitType:InsBenefitType.CoInsurance,percent:50);
 			insuranceInfo.AddBenefit(benefit);
 			//Add the corresponding procedure to the fee schedule

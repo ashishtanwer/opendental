@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using OpenDentBusiness.Eclaims;
-using static OpenDentBusiness.Eclaims.Canadian;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -499,8 +498,112 @@ namespace OpenDental {
 				LogClaimError(createClaimDataWrapper,e.Message,isVerbose,msgBoxHeader);
 				return claim;
 			}
+			if(PrefC.GetBool(PrefName.ClaimEditRequireNoMissingData)) {
+				ClaimSendQueueItem[] claimSendQueueItemArray=Claims.GetQueueList(claim.ClaimNum,claim.ClinicNum,claim.CustomTracking);
+				//GetMissingData() guards around null, so if somehow we don't have a claim here we pass in null. ElementAtOrDefault will pass in null if there is no 0 index somehow.
+				Clearinghouse clearingHouse=Clearinghouses.GetClearinghouse(claimSendQueueItemArray.ElementAtOrDefault(0).ClearinghouseNum);
+				ClaimSendQueueItem claimSendQueueItem=Eclaims.GetMissingData(clearingHouse,claimSendQueueItemArray.ElementAtOrDefault(0),true,true);
+				if(!claimSendQueueItem.MissingData.IsNullOrEmpty() && (claim.ClaimType!="PreAuth")){//Skip validation for pre-auths if they get a claim identifier warning since they won't have a claim identifier yet, which counts as missing data, but is fixed inside of this window.
+					MsgBox.Show("Cannot create claim due to missing data. The claim has the following errors: "+claimSendQueueItem.MissingData);
+					DeleteClaimHelper(claim);//Deletes the claim and handles the cleanup.
+					return new Claim();
+				}
+			}
 			createClaimDataWrapper.CountClaimsCreated++;
 			return claim;
+		}
+
+		///<summary>This helper method does all of the work necessary to clean up after all of said entities and deletes the claim as well. If ClaimType is 'PreAuth' or 'Cap', claimprocs will be deleted. Otherwise, all pay-as-total and supplemental claimprocs are deleted, and all other claimprocs are returned to estimate status, their ClaimNum is set to zero, we run ClaimProcs.ComputeBaseEstimates() for them, and they are updated to the DB. Any claimprocs associated to dropped patplans are deleted. Canadian lab claimprocs have their status synced with parent claimprocs and are ommitted when running ClaimProcs.ComputeBaseEstimates() as their estimates are calculated when ClaimProcs.ComputeBaseEstimates() is called for thier parent claimprocs. It is okay to default list835Attaches to null if this is called when cancelling a new claim as none should exist.</summary>
+		public static void DeleteClaimHelper(Claim claim,List<long> list835Attaches=null) {
+			Patient patient=Patients.GetPat(claim.PatNum);
+			Family family=Patients.GetFamily(claim.PatNum);
+			ClaimEdit.LoadData loadData= ClaimEdit.GetLoadData(patient,family,claim);
+			List<ClaimProc> listClaimProcs=loadData.ListClaimProcs.Where(x=>x.ClaimNum==claim.ClaimNum).ToList();
+			List<Procedure> listProcedures=loadData.ListProcs;
+			List<InsSub> listInsSubs=loadData.ListInsSubs;
+			List<InsPlan> listInsPlans=loadData.ListInsPlans;
+			List<PatPlan> listPatPlans=loadData.ListPatPlans;
+			BlueBookEstimateData blueBookEstimateData=null;
+			if(claim.ClaimType=="PreAuth"//all preauth claimprocs are just duplicates
+				|| claim.ClaimType=="Cap") //all cap claimprocs are just duplicates
+			{
+				ClaimProcs.DeleteMany(listClaimProcs);
+			}
+			else {//all other claim types use original estimate claimproc.
+				List<SubstitutionLink> listSubstituionLinks=SubstitutionLinks.GetAllForPlans(listInsPlans);
+				List<Benefit> listBenefits=Benefits.Refresh(listPatPlans,listInsSubs);
+				InsPlan insPlan=InsPlans.GetPlan(claim.PlanNum,listInsPlans);
+				for(int i=0;i<listClaimProcs.Count;i++) {
+					if(listClaimProcs[i].Status==ClaimProcStatus.Supplemental//supplementals are duplicate
+						|| listClaimProcs[i].ProcNum==0//total payments get deleted
+						|| listClaimProcs[i].IsOverpay)//Overpayment proc claims also get deleted
+					{
+						ClaimProcs.Delete(listClaimProcs[i]);
+						continue;
+					}
+					//so only changed back to estimate if attached to a proc
+					listClaimProcs[i].Status=ClaimProcStatus.Estimate;
+					//already handled the case where claimproc.ProcNum=0 for payments etc. above
+					Procedure procedure=Procedures.GetProcFromList(listProcedures,listClaimProcs[i].ProcNum);
+					List<ClaimProc> listClaimProcsForLab=GetListClaimProcsForProcNumLabsParent(procedure.ProcNum, listProcedures, listClaimProcs,claim);//Get any potential Claimprocs for the Proc "i"
+					if(listClaimProcsForLab.Count!=0) {//And proc "i" has labs. 
+						for(int j=0;j<listClaimProcsForLab.Count;j++) {//Foreach lab
+							listClaimProcsForLab[j].Status=listClaimProcs[i].Status;//Match to parent status so estimates for ClaimProcs.CanadianLabBaseEstHelper().
+							ClaimProcs.Update(listClaimProcsForLab[j]);//Both parent procs and labs need to have their statuses in synch when ComputeBaseEst
+						}
+					}
+					listClaimProcs[i].ClaimNum=0;
+					if(procedure.ProcNumLab!=0) {
+						//Skip lab procedures because their parent will handle their estimate updates below (including the status and claimNum set above).
+						continue;
+					}
+					PatPlan patPlan=listPatPlans.FirstOrDefault(x => x.InsSubNum==listClaimProcs[i].InsSubNum);
+					if(patPlan==null) {
+						continue;
+					}
+					if(patPlan.Ordinal==1) {
+						ClaimProcs.ComputeBaseEst(listClaimProcs[i],procedure,insPlan,patPlan.PatPlanNum,listBenefits,null,null,listPatPlans,0,0,patient.Age,0
+							,listInsPlans,listInsSubs,listSubstituionLinks,false,null,blueBookEstimateData:GetBlueBookEstimateData(blueBookEstimateData, listProcedures, listInsPlans, listInsSubs, listPatPlans, listClaimProcs, listSubstituionLinks));
+					}
+					else {
+						//We're not going to bother to also get paidOtherInsBaseEst:
+						double paidOtherInsTotal=ClaimProcs.GetPaidOtherInsTotal(listClaimProcs[i],listPatPlans);
+						double writeOffOtherIns=ClaimProcs.GetWriteOffOtherIns(listClaimProcs[i],listPatPlans);
+						ClaimProcs.ComputeBaseEst(listClaimProcs[i],procedure,insPlan,patPlan.PatPlanNum,listBenefits,null,null,listPatPlans,paidOtherInsTotal
+							,paidOtherInsTotal,patient.Age,writeOffOtherIns,listInsPlans,listInsSubs,listSubstituionLinks,false,null,blueBookEstimateData:GetBlueBookEstimateData(blueBookEstimateData, listProcedures, listInsPlans, listInsSubs, listPatPlans, listClaimProcs, listSubstituionLinks));
+					}
+					InsBlueBookLog insBlueBookLog=GetBlueBookEstimateData(blueBookEstimateData, listProcedures, listInsPlans, listInsSubs, listPatPlans, listClaimProcs, listSubstituionLinks).CreateInsBlueBookLog(listClaimProcs[i]);
+					if(insBlueBookLog!=null) {
+						InsBlueBookLogs.Insert(insBlueBookLog);
+					}
+					ClaimProcs.Update(listClaimProcs[i]);
+				}
+			}
+			ClaimProcs.DeleteEstimatesForDroppedPatPlan(listClaimProcs);
+			Claims.Delete(claim,list835Attaches);
+		}
+
+		///<summary>Copied from FormClaimEdit. For a given procNumParent, return a list of ClaimProcs for that lab(s) that is on the claim.</summary>
+		private static List<ClaimProc> GetListClaimProcsForProcNumLabsParent(long procNumParent,List<Procedure> listProcedures, List<ClaimProc> listClaimProcs,Claim claim) {
+			List<ClaimProc> listClaimProcsForLabOnClaim=new List<ClaimProc>();
+			if(procNumParent==0) {
+				return listClaimProcsForLabOnClaim;
+			}
+			//List of child procedures associated to the passed in procNumParent belonging to this claim.
+			List<Procedure> listProceduresLab=listProcedures.FindAll(x => x.ProcNumLab==procNumParent);
+			for(int i=0;i<listProceduresLab.Count;i++){//For each lab proc associated to the passed in procNumParent, add it to the list
+				listClaimProcsForLabOnClaim.AddRange(listClaimProcs.FindAll(x => x.ProcNum==listProceduresLab[i].ProcNum && x.ClaimNum==claim.ClaimNum));
+			}
+			return listClaimProcsForLabOnClaim;
+		}
+
+		///<summary>Copied from FormClaimEdit. Sets _blueBookEstimateData if it is null, then returns it.</summary>
+		private static BlueBookEstimateData GetBlueBookEstimateData(BlueBookEstimateData blueBookEstimateData, List<Procedure> listProcedures, List<InsPlan> listInsPlans, List<InsSub> listInsSubs, List<PatPlan> listPatPlans, List<ClaimProc> listClaimProcs, List<SubstitutionLink> listSubstituionLinks) {
+			if(blueBookEstimateData==null) {
+				listProcedures=listProcedures.FindAll(x => listClaimProcs.Any(y => y.ProcNum==x.ProcNum));
+				blueBookEstimateData=new BlueBookEstimateData(listInsPlans,listInsSubs,listPatPlans,listProcedures,listSubstituionLinks);
+			}
+			return blueBookEstimateData;
 		}
 
 		/// <summary>

@@ -1225,8 +1225,12 @@ namespace OpenDental{
 			if(!SaveToDb()){
 				return;
 			}
-			//If saving a statement that doesn't yet have an image/doc and it has been sent already, create one.
-			if(ListStatements==null && StatementCur.DocNum==0 && StatementCur.IsSent) {
+			//When saving here, the billing window might still be open with this statement in the list.
+			//In that case, it gets saved to Image mod here and then could get saved again in the billing list.
+			//This would not result in two statement entries, but would result in two PDFs.
+			//This is normal behavior. B47386 tried to fix this, but that was wrong.
+			//If saving a statement that doesn't yet have an image/doc, create one.
+			if(ListStatements==null && StatementCur.DocNum==0 && !_isFromBilling) {
 				SaveAsDocument(false);//needs to be called after the statement is inserted for the payment plan grid (if present)
 			}
 			if(checkExportCSV.Checked) {

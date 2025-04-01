@@ -2471,9 +2471,10 @@ using OpenDental.UI;
 				if(ListGridRows.Count>_selectedCellOld.Y) {
 					//In FormQueryParser, SetFilterControlsAndAction uses an action that calls FillGrid, but number of rows can be different than before.
 					//This is a problem when use is editing a cell and clicks Tab.  That should really be fixed, but this makes the grid more resilient.
+					//This also happens in FormPayPlanDynamic after unchecking checkShowAttachedP&I while a text cell is selected.
 					ComputeRowHeightOne(g,_selectedCellOld.Y);
+					ComputeRowYposStartingAt(_selectedCellOld.Y);
 				}
-				ComputeRowYposStartingAt(_selectedCellOld.Y);
 				LayoutScrolls();
 			}
 		}

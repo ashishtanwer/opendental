@@ -327,7 +327,6 @@ namespace OpenDental {
 				case DisplayReports.ReportNames.CustomAging:
 				case DisplayReports.ReportNames.TreatmentFinder:
 				case DisplayReports.ReportNames.WebSchedAppointments:
-				case DisplayReports.ReportNames.ReferredProcTracking:
 				case DisplayReports.ReportNames.ProcNotBilledIns:
 				case DisplayReports.ReportNames.IncompleteProcNotes:
 				case DisplayReports.ReportNames.ODProcOverpaid:

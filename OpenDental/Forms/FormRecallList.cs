@@ -2064,7 +2064,7 @@ namespace OpenDental {
 			}
 			WindowState=FormWindowState.Minimized;
 			if(isRecall && listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime>=DateTime.Today) { //we're dealing with a future recall(s), so pin it and jump to it's date
-				GlobalFormOpenDental.GoToModule(EnumModuleType.Appointments, listPinApptNums:listAppointmentsPinned.Select(x=>x.AptNum).ToList(), patNum:_patNumCur,dateSelected:listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime);
+				GlobalFormOpenDental.GoToModule(EnumModuleType.Appointments, listPinApptNums:listAppointmentsPinned.Select(x=>x.AptNum).ToList(), patNum:_patNumCur,dateSelected:listAppointmentsPinned[listAppointmentsPinned.Count-1].AptDateTime,doShowSearch:true);
 			}
 			else { //it's a reactivation / it's a recall that is overdue or unsafe to jump to, so just pin it and jump to today's date
 				GlobalFormOpenDental.GoToModule(EnumModuleType.Appointments, listPinApptNums:listAppointmentsPinned.Select(x=>x.AptNum).ToList(), patNum:_patNumCur, dateSelected:DateTime.Today);

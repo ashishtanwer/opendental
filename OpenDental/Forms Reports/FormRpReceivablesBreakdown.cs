@@ -198,7 +198,7 @@ namespace OpenDental {
 					DataTable TableQ = new DataTable();
 					TableQ.Columns.Add("Date");
 					TableQ.Columns.Add("Production");
-					TableQ.Columns.Add("PayPlanCredits");
+					TableQ.Columns.Add("PayPlanProduction");
 					TableQ.Columns.Add("Charges");
 					TableQ.Columns.Add("PayPlanCharges");
 					TableQ.Columns.Add("Adjustments");
@@ -262,7 +262,7 @@ namespace OpenDental {
 						rcvDaily = (rcvProd - rcvPayPlanCredit + rcvPayPlanCharges + rcvAdj - rcvWriteoff) - (rcvPayment + rcvInsPayment);
 						runningRcv += (rcvProd - rcvPayPlanCredit + rcvPayPlanCharges + rcvAdj - rcvWriteoff) - (rcvPayment + rcvInsPayment);
 						row["Production"] = rcvProd.ToString("n");
-						row["PayPlanCredits"] = rcvPayPlanCredit.ToString("n");
+						row["PayPlanProduction"] = rcvPayPlanCredit.ToString("n");
 						row["Charges"] = rcvCharge.ToString("n");
 						row["PayPlanCharges"] = rcvPayPlanCharges.ToString("n");
 						row["Adjustments"] = rcvAdj.ToString("n");
@@ -344,10 +344,10 @@ namespace OpenDental {
 					query.AddColumn("Production",80,FieldValueType.Number);
 					query.GetColumnDetail("Production").ContentAlignment=ContentAlignment.MiddleRight;
 					if(isPayPlan2) {
-						query.AddColumn("PayPlanCredits",90,FieldValueType.Number);
-						query.GetColumnDetail("PayPlanCredits").ContentAlignment=ContentAlignment.MiddleRight;
-						query.AddColumn("Prod - PPCred",85,FieldValueType.Number);
-						query.GetColumnDetail("Prod - PPCred").ContentAlignment=ContentAlignment.MiddleRight;
+						query.AddColumn("PayPlanProd",90,FieldValueType.Number);
+						query.GetColumnDetail("PayPlanProd").ContentAlignment=ContentAlignment.MiddleRight;
+						query.AddColumn("Prod - PPProd",85,FieldValueType.Number);
+						query.GetColumnDetail("Prod - PPProd").ContentAlignment=ContentAlignment.MiddleRight;
 						query.AddColumn("PayPlanCharges",100,FieldValueType.Number);
 						query.GetColumnDetail("PayPlanCharges").ContentAlignment=ContentAlignment.MiddleRight;
 					}
@@ -365,7 +365,7 @@ namespace OpenDental {
 					query.GetColumnDetail("Ending A/R").ContentAlignment=ContentAlignment.MiddleRight;
 					query.GetColumnDetail("Ending A/R").Font=boldFont;
 					if(isPayPlan2) {
-						report.AddFooterText("Desc","Receivables Calculation: (Production - PayPlanCredits + PayPlanCharges + Adjustments - Write-offs) "
+						report.AddFooterText("Desc","Receivables Calculation: (Production - PayPlanProduction + PayPlanCharges + Adjustments - Write-offs) "
 							+"- (Payments + Insurance Payments)",font,0,ContentAlignment.MiddleCenter);
 					}
 					else {

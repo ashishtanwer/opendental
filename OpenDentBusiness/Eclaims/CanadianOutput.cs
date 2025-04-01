@@ -1337,7 +1337,6 @@ namespace OpenDentBusiness.Eclaims {
 			//If carrier is Alberta Blue Cross (ABC), then ClaimStream will be selected as the clearinghouseHq if the user has the recommended setup.
 			Clearinghouse clearinghouseHq=Canadian.GetCanadianClearinghouseHq(carrier);
 			Clearinghouse clearinghouseClin=Clearinghouses.OverrideFields(clearinghouseHq,Clinics.ClinicNum);
-			CanadianNetwork netTelusA=CanadianNetworks.GetFirstOrDefault(x => x.Abbrev=="TELUS A");
 			CanadianNetwork netTelusB=CanadianNetworks.GetFirstOrDefault(x => x.Abbrev=="TELUS B");
 			//Check version 04 reports first, in case there is an error.  Most carrier use version 04.
 			//If there is an error with version 02, then we would not want it to stop version 04 reports from running.
@@ -1349,7 +1348,6 @@ namespace OpenDentBusiness.Eclaims {
 					}
 					else if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.None)) {//Claimstream or CanadaFakeClearinghouse
 						//Alberta Blue Cross (ABC) only accepts requests with a carrier specified (since there is only 1 carrier in their network).
-						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,netTelusA,printForm,printCCD));
 						listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"04",null,netTelusB,printForm,printCCD));
 					}
 				}
@@ -1365,7 +1363,6 @@ namespace OpenDentBusiness.Eclaims {
 				}
 				else if(clearinghouseHq.CommBridge.In(EclaimsCommBridge.Claimstream,EclaimsCommBridge.None)) {//Claimstream or CanadaFakeClearinghouse
 					//Alberta Blue Cross (ABC) uses version 04.  Therefore, no need to ask for version 02 reports.
-					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,netTelusA,printForm,printCCD));
 					listEtrans.AddRange(CanadianOutput.GetOutstandingForClearinghouse(clearinghouseClin,prov,"02",null,netTelusB,printForm,printCCD));
 				}
 			}

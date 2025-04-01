@@ -2318,7 +2318,7 @@ namespace OpenDentBusiness {
 						if(pat.StudentStatus=="F" && field.RadioButtonValue=="Fulltime") {
 							field.FieldValue="X";
 						}
-						if(pat.StudentStatus=="N" && field.RadioButtonValue=="Nonstudent") {
+						if((pat.StudentStatus=="N" || pat.StudentStatus=="") && field.RadioButtonValue=="Nonstudent") {
 							field.FieldValue="X";
 						}
 						if(pat.StudentStatus=="P" && field.RadioButtonValue=="Parttime") {

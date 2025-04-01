@@ -33,7 +33,7 @@ namespace OpenDental {
 
 		private void FormTaskListSelect_Load(object sender, System.EventArgs e) {
 			SetLabelText();
-			if(!PrefC.GetBool(PrefName.TasksForApptAllowMultiple)){
+			if(_taskObjectType==TaskObjectType.Appointment && !PrefC.GetBool(PrefName.TasksForApptAllowMultiple)){
 				//Dont allow send Multiple when each appointment can only be attached to one task.
 				checkMulti.Enabled=false;
 				checkMulti.Checked=false;

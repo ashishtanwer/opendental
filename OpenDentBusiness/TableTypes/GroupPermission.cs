@@ -112,10 +112,10 @@ namespace OpenDentBusiness{
 		[Description("Appointment Create")]
 		AppointmentCreate,
 		///<summary>26</summary>
-		[Description("Appointment Move. Dragging, moving to pinboard, or setting broken or unscheduled")]
+		[Description("Appointment Move. Dragging, moving to pinboard, or setting unscheduled")]
 		AppointmentMove,
 		///<summary>27.  AppointmentDelete permission required in order to delete appointments.</summary>
-		[Description("Appointment Edit. Does not include moving or resizing")]
+		[Description("Appointment Edit. Includes breaking appointments and deleting appointments from the unscheduled list. Does not include moving or resizing. Also see Completed Appointment Edit.")]
 		AppointmentEdit,
 		///<summary>28</summary>
 		[Description("Backup")]
@@ -322,7 +322,7 @@ namespace OpenDentBusiness{
 		[Description("Claim History Edit")]
 		ClaimHistoryEdit,
 		///<summary>96- Allows user to edit a completed appointment. AppointmentCompleteDelete permission required in order to delete completed appointments.</summary>
-		[Description("Completed Appointment Edit")]
+		[Description("Completed Appointment Edit. Includes breaking a completed appointment.")]
 		AppointmentCompleteEdit,
 		///<summary>97- Audit trail for deleting webmail messages.  There is no user interface in the security window for this permission.</summary>
 		[Description("Webmail Delete")]

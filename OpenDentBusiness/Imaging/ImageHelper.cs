@@ -610,7 +610,7 @@ namespace OpenDentBusiness {
 			return false;
 		}
 
-		/// <summary>Throws exceptions. Calling method is responsible for disposing of the MemoryStream and returned Bitmap appropriately. Attempts to load the given file into a Bitmap that PdfSharp will be happy with.</summary>
+		///<summary>Throws exceptions. Calling method is responsible for disposing of the MemoryStream and returned Bitmap appropriately. Attempts to load the given file into a Bitmap that PdfSharp will be happy with.</summary>
 		public static Bitmap GetBitmapPDF(string fullFilePath,MemoryStream memoryStream) {
 			if(fullFilePath.IsNullOrEmpty()) {
 				return null;
@@ -628,6 +628,22 @@ namespace OpenDentBusiness {
 				bitmapOriginal.Dispose();
 				bitmapOriginal=new Bitmap(memoryStream);
 			}
+			return GetBitmapForPDFSharp(bitmapOriginal,bitmapOriginal.RawFormat,memoryStream);
+		}
+
+		///<summary>Throws exceptions. Calling method is responsible for disposing of the MemoryStream and returned Bitmap appropriately. Attempts to set the passed in Bitmap so that PdfSharp will be happy with.</summary>
+		public static Bitmap GetBitmapPDF(Bitmap bitmapOriginal,ImageFormat imageFormat, MemoryStream memoryStream) {
+			if(bitmapOriginal==null) {
+				return null;
+			}
+			return GetBitmapForPDFSharp(bitmapOriginal,imageFormat,memoryStream);
+		}
+
+		/// <summary>Throws exceptions. Calling method is responsible for disposing of the MemoryStream and returned Bitmap appropriately. Attempts set the provided Bitmap so PdfSharp will be happy with.</summary>
+		private static Bitmap GetBitmapForPDFSharp(Bitmap bitmapOriginal, ImageFormat imageFormat, MemoryStream memoryStream) {
+			if(bitmapOriginal==null) {
+				return null;
+			}
 			// 07/24/2015 Task created by Brian for a customer stated that when creating a PDF of a sheet that is generated using an image as a background 
 			// the PDF will sometimes distort the image beyond recognition.  This didn't happen in 14.3 and began happening in 15.1.  In versions 14.3 and 
 			// earlier this section of code would resize the image gotten from the specified file and put it into a new Bitmap object.  It was discovered 
@@ -643,7 +659,7 @@ namespace OpenDentBusiness {
 				memoryStream.Dispose();
 			}
 			memoryStream=new MemoryStream();
-			bitmapQualityCopy.Save(memoryStream,bitmapOriginal.RawFormat);//Convert the BMP back to the original image format which will typically cut down the image size.
+			bitmapQualityCopy.Save(memoryStream,imageFormat);//Convert the BMP back to the original image format which will typically cut down the image size.
 			bitmapOriginal.Dispose();
 			bitmapOriginal=new Bitmap(memoryStream);//Override the original image with the re-saved imaged in the memory stream (fixes corrupt images).
 			if(bitmapQualityCopy!=null) {

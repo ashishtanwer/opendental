@@ -1093,7 +1093,6 @@ namespace OpenDental{
 				}
 				listClaimProcHists.AddRange(ClaimProcs.GetHistForProc(listClaimProcs,listProcedures[i],listProcedures[i].CodeNum));
 			}
-			long aptNumOld=procedure.AptNum;
 			using FormProcEdit formProcEdit=new FormProcEdit(procedure,_patient,_family);
 			formProcEdit.ListClaimProcHists=_loadData.ListClaimProcHists;
 			formProcEdit.ListClaimProcHistsLoop=listClaimProcHists;
@@ -1103,19 +1102,20 @@ namespace OpenDental{
 				//SetTimeSliderColors();
 				return;
 			}
-			//Scenario we are trying to fix:
-			//	appt was complete
-			//	appt was set to scheduled via status combobox on this form
-			//	and before closing form, this procedure was edited.
-			//	Problem is that Procedures.Update erroneously detaches the proc from the appt.
-			//Our solution is to let it get detached and then reattach below.
-			Procedure procedureOld=procedure.Copy();
-			if(procedure.AptNum!=aptNumOld){
-				procedure.AptNum=aptNumOld;
-			}
-			//this method guarantees that we are only changing AptNum, even though procedure object is stale.
-			Procedures.Update(procedure,procedureOld);
 			_listProceduresForAppointment=Procedures.GetProcsForApptEdit(_appointment);//We need to refresh in case the user changed the ProcCode or set the proc complete.
+			//Scenario we are trying to fix:
+			//Appt was complete.
+			//User sets appt to scheduled via status combobox on this form.
+			//User double clicks on procedure.
+			//User sets procedure to TP.
+			//When user clicks Save, procedure.AptNum gets set to 0 inside Procedures.Update()
+			//Procedures.Update is a mess and it's too complex to try to fix it there.
+			//Instead, we will fix it here.
+			procedure.AptNum=_appointment.AptNum;
+			Procedure procedureinGrid=_listProceduresForAppointment.Find(x => x.ProcNum==procedure.ProcNum);
+			if(procedureinGrid!=null) {//procedureinGrid will be null if the procedure was deleted, so no need to update
+				Procedures.Update(procedure,procedureinGrid);
+			}
 			//The next 3 lines are a duplicate of a section in butDeleteProc to handle deleted procedures.
 			Appointments.SetProcDescript(_appointment,_listProceduresForAppointment);
 			_appointmentOld.ProcDescript=_appointment.ProcDescript;
@@ -2715,25 +2715,15 @@ namespace OpenDental{
 
 		private void butSave_Click(object sender, System.EventArgs e) {
 			DateTime datePrevious=_appointment.DateTStamp;
-			if(comboStatus.GetSelected<ApptStatus>()==ApptStatus.UnschedList) {
-				if(!Security.IsAuthorized(EnumPermType.AppointmentMove,MiscData.GetNowDateTime(),true)) {
-					comboStatus.SetSelectedEnum(_appointmentOld.AptStatus);
-					MsgBox.Show("The current user is not authorized to change status to unscheduled. Permission needed: "+EnumPermType.AppointmentMove.GetDescription());
+			if(comboStatus.GetSelected<ApptStatus>()==ApptStatus.UnschedList && _appointmentOld.AptStatus!=ApptStatus.UnschedList) {
+				if(!Security.IsAuthorized(EnumPermType.AppointmentMove)) {
+						comboStatus.SetSelectedEnum(_appointmentOld.AptStatus);
 					return;
 				}
 			}
 			if (comboProv.GetSelectedProvNum()==0) {
 				MsgBox.Show(this,"Please select a provider.");
 				return;
-			}
-			if(_appointmentOld.AptStatus!=ApptStatus.UnschedList && _appointment.AptStatus==ApptStatus.UnschedList) {
-				//Extra log entry if the appt was sent to the unscheduled list
-				EnumPermType permissions=EnumPermType.AppointmentMove;
-				if(_appointmentOld.AptStatus==ApptStatus.Complete) {
-					permissions=EnumPermType.AppointmentCompleteEdit;
-				}
-				SecurityLogs.MakeLogEntry(permissions,_appointment.PatNum,_appointment.ProcDescript+", "+_appointment.AptDateTime.ToString()
-					+", Sent to Unscheduled List",_appointment.AptNum,datePrevious);
 			}
 			#region Validate Apt Start and End
 			int minutes=contrApptProvSlider.Pattern.Length*5;
@@ -2745,6 +2735,15 @@ namespace OpenDental{
 			#endregion
 			if(!UpdateListAndDB(isClosing: true, doCreateSecLog: true, doInsertHL7: true)) {
 				return;
+			}
+			if(_appointmentOld.AptStatus!=ApptStatus.UnschedList && _appointment.AptStatus==ApptStatus.UnschedList) {
+				//Extra log entry if the appt was sent to the unscheduled list
+				EnumPermType permissions=EnumPermType.AppointmentMove;
+				if(_appointmentOld.AptStatus==ApptStatus.Complete) {
+					permissions=EnumPermType.AppointmentCompleteEdit;
+				}
+				SecurityLogs.MakeLogEntry(permissions,_appointment.PatNum,_appointment.ProcDescript+", "+_appointment.AptDateTime.ToString()
+					+", Sent to Unscheduled List",_appointment.AptNum,datePrevious);
 			}
 			if(PrefC.GetBool(PrefName.ApptsRequireProc)
 				&& (_appointment.AptStatus==ApptStatus.Scheduled || _appointment.AptStatus==ApptStatus.Planned)

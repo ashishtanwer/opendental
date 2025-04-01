@@ -55,6 +55,17 @@ namespace OpenDental {
 		}
 
 	private void FormWebFormSetup_Load(object sender,EventArgs e) {
+			//Formats currently supported in webforms.
+			DateTime DateTimeExample=new DateTime(2024,6,18);
+			List<CultureDateFormat> listCultureDateFormats=new List<CultureDateFormat>();
+			listCultureDateFormats.Add(new CultureDateFormat("en-US","M/d/yyyy ("+DateTimeExample.ToString("M/d/yyyy")+")"));
+			listCultureDateFormats.Add(new CultureDateFormat("en-CA","dd/MM/yyyy ("+DateTimeExample.ToString("dd/MM/yyyy")+")"));
+			listCultureDateFormats.Add(new CultureDateFormat("da-DK","dd-MM-yyyy ("+DateTimeExample.ToString("dd-MM-yyyy")+")"));
+			listCultureDateFormats.Add(new CultureDateFormat("en-AU","d/MM/yyyy ("+DateTimeExample.ToString("d/MM/yyyy")+")"));
+			listCultureDateFormats.Add(new CultureDateFormat("mn-MN","yy.MM.dd ("+DateTimeExample.ToString("yy.MM.dd")+")"));
+			listCultureDateFormats.Add(new CultureDateFormat("zh-CN","yyyy/M/d ("+DateTimeExample.ToString("yyyy/M/d")+")"));
+			comboDateFormat.Items.AddList(listCultureDateFormats,(cultureDateFormat) => cultureDateFormat.DateFormat);
+			comboDateFormat.SelectedIndex=0;
 			if(IsPickerForWebSched) {
 				//hide everything but grid, ConstructURL, and Save button.
 				for(int i = 0;i<PanelClient.Controls.Count;i++) {
@@ -112,17 +123,6 @@ namespace OpenDental {
 			checkAutoFillNameBDPref.Checked=PrefC.GetBool(PrefName.WebFormsAutoFillNameAndBirthdate);//the pref itself
 			checkAutoFillNameAndBirthdate.Checked=checkAutoFillNameBDPref.Checked;//and the consequence of the pref
 			checkEnableAutoDownload.Checked=PrefC.GetBool(PrefName.WebFormsDownloadAutomcatically);
-			//Formats currently supported in webforms.
-			DateTime DateTimeExample=new DateTime(2024,6,18);
-			List<CultureDateFormat> listCultureDateFormats=new List<CultureDateFormat>();
-			listCultureDateFormats.Add(new CultureDateFormat("en-US","M/d/yyyy ("+DateTimeExample.ToString("M/d/yyyy")+")"));
-			listCultureDateFormats.Add(new CultureDateFormat("en-CA","dd/MM/yyyy ("+DateTimeExample.ToString("dd/MM/yyyy")+")"));
-			listCultureDateFormats.Add(new CultureDateFormat("da-DK","dd-MM-yyyy ("+DateTimeExample.ToString("dd-MM-yyyy")+")"));
-			listCultureDateFormats.Add(new CultureDateFormat("en-AU","d/MM/yyyy ("+DateTimeExample.ToString("d/MM/yyyy")+")"));
-			listCultureDateFormats.Add(new CultureDateFormat("mn-MN","yy.MM.dd ("+DateTimeExample.ToString("yy.MM.dd")+")"));
-			listCultureDateFormats.Add(new CultureDateFormat("zh-CN","yyyy/M/d ("+DateTimeExample.ToString("yyyy/M/d")+")"));
-			comboDateFormat.Items.AddList(listCultureDateFormats,(cultureDateFormat) => cultureDateFormat.DateFormat);
-			comboDateFormat.SelectedIndex=0;
 		}
 
 		private void FormWebFormSetup_Shown(object sender,EventArgs e) {

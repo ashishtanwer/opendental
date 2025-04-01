@@ -1789,11 +1789,21 @@ namespace OpenDental {
 			PrintCarrier(g);
 			_x=_documentGenerator.StartElement();
 			if(_responseStatus=="R") {
-				if(_isFrench) {
-					_text="REFUS D'UNE DEMANDE DE PRESTATIONS";
+				if(_hasPredetermination) {
+					if(_isFrench) {
+						_text="AVIS DE REJET DE PRÉDÉTERMINATION";
+					}
+					else {
+						_text="PREDETERMINATION REJECTION NOTICE";
+					}
 				}
 				else {
-					_text="CLAIM REJECTION NOTICE";
+					if(_isFrench) {
+						_text="REFUS D'UNE DEMANDE DE PRESTATIONS";
+					}
+					else {
+						_text="CLAIM REJECTION NOTICE";
+					}
 				}
 			}
 			else {

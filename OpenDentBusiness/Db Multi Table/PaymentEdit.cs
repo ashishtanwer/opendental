@@ -749,9 +749,9 @@ namespace OpenDentBusiness {
 			}
 			#endregion
 			#region Payment Plan Offsetting Debits
-			//Dynamic payment plans can get into this rare scenario where a debit charge has been inserted into the database for too much value.
-			//There is a 'fix' that users can apply from within the dynamic payment plan overcharge report which will create offsetting negative debits.
-			//These offsetting charges need to remove value from corresponding debits that are linked to the same production entry (proc, adj, etc).
+			//Dynamic payment plans can get into this rare scenario where a charge has been inserted into the database for too much value.
+			//There is a 'fix' that users can apply from within the dynamic payment plan overcharge report which will create offsetting negative charges.
+			//These offsetting charges need to remove value from corresponding charges that are linked to the same production entry (proc, adj, etc).
 			//The following code is explicitly written to work for all payment plan types just in case we need to introduce this paradigm to others.
 			List<FauxAccountEntry> listFauxAccountEntriesOffsetDebits=listFauxAccountEntries.FindAll(x => x.IsOffset);
 			for(int i=0;i<listFauxAccountEntriesOffsetDebits.Count;i++) {
@@ -1357,7 +1357,7 @@ namespace OpenDentBusiness {
 				if(!accountEntryInsProc.ListPayPlanPrincipalApplieds.IsNullOrEmpty()) {
 					sumPrincipalApplied=accountEntryInsProc.ListPayPlanPrincipalApplieds.Sum(x => x.PrincipalApplied);
 				}
-				accountEntryInsProc.WarningMsg.AppendLine($"  ^PayPlan Credits: {sumPrincipalApplied:C}");
+				accountEntryInsProc.WarningMsg.AppendLine($"  ^PayPlan Production: {sumPrincipalApplied:C}");
 				accountEntryInsProc.WarningMsg.AppendLine($"  ^InsPayAmt: {accountEntryInsProc.InsPayAmt:C}");
 				decimal sumSplitAmt=accountEntryInsProc.SplitCollection.Sum(x => (decimal)x.SplitAmt);
 				accountEntryInsProc.WarningMsg.AppendLine($"  ^PatPayAmt: {sumSplitAmt:C}");

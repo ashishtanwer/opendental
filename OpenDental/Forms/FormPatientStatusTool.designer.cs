@@ -171,6 +171,7 @@ namespace OpenDental {
 			// 
 			// labelChangeTo
 			// 
+			this.labelChangeTo.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.labelChangeTo.Location = new System.Drawing.Point(358, 598);
 			this.labelChangeTo.Name = "labelChangeTo";
 			this.labelChangeTo.Size = new System.Drawing.Size(147, 21);
@@ -180,6 +181,7 @@ namespace OpenDental {
 			// 
 			// comboChangePatientStatusTo
 			// 
+			this.comboChangePatientStatusTo.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
 			this.comboChangePatientStatusTo.Location = new System.Drawing.Point(511, 598);
 			this.comboChangePatientStatusTo.Name = "comboChangePatientStatusTo";
 			this.comboChangePatientStatusTo.Size = new System.Drawing.Size(149, 21);

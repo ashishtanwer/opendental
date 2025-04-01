@@ -103,7 +103,7 @@ namespace OpenDental {
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","FirstName"),80));
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","MI"),30));
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Title"),70));
-			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Specialty"),60));
+			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Specialty"),70));
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Patient"),45));
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Business Name"),150));
 			gridMain.Columns.Add(new GridColumn(Lang.g("TableSelectRefferal","Note"),0));

@@ -72,6 +72,7 @@ namespace OpenDentBusiness {
 
 	///<summary>Backing class for PrefName.PaymentPortalMsgToPayEmailMessageTemplate and PrefName.PaymentPortalMsgToPayEmailMessageTemplateAppt. Holds the email template and type (html, raw html, etc, etc)</summary>
 	public class MsgToPayEmailTemplate {
+		///<summary>The user's saved email template.</summary>
 		public string Template;
 		public EmailType EmailType;
 	}

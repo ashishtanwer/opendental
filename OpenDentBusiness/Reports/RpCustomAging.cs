@@ -15,6 +15,11 @@ namespace OpenDentBusiness {
 				return Meth.GetObject<List<AgingPat>>(MethodBase.GetCurrentMethod(),ageOptions);
 			}
 			_isAgedByProc=PrefC.GetYN(PrefName.AgingProcLifo);
+			/*
+			************************************************************************************
+			WARNING! ANY CHANGE TO THE QUERY BELOW MUST ALSO BE DONE IN Ledgers.cs
+			************************************************************************************
+			*/
 			string command=@"SELECT patient.fname,patient.lname,patient.patnum,guarAging.Bal_0_30,guarAging.Bal_31_60,
 			 guarAging.Bal_61_90,guarAging.BalOver90,guarAging.BalTotal 
 			 FROM (";
@@ -65,23 +70,22 @@ namespace OpenDentBusiness {
 			else {
 				command+=@"SELECT p.Guarantor PatNum, ";
 			}
-			List<string> listInstantTranTypes=new List<string>();
-			listInstantTranTypes.Add("'WriteoffOrig'");
+			string transTypesInclude="trans.TranType IN ('WriteoffOrig'";
 			if(_isAgedByProc) {
-				listInstantTranTypes.Add("'SumByProcAndDate'");
+				transTypesInclude+=",'SumByProcAndDate'";
 			}
-			string instantAdd="trans.TranType IN ("+string.Join(",",listInstantTranTypes)+")";
+			transTypesInclude+=")";
 			command += @"
-				SUM(CASE WHEN(trans.TranAmount > 0 OR "+instantAdd+@") AND trans.TranDate >= "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 30 DAY THEN trans.TranAmount ELSE 0 END) Charges_0_30,
-				SUM(CASE WHEN(trans.TranAmount > 0 OR "+instantAdd+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 60 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 31 DAY THEN trans.TranAmount ELSE 0 END) Charges_31_60,
-				SUM(CASE WHEN(trans.TranAmount > 0 OR "+instantAdd+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 61 DAY THEN trans.TranAmount ELSE 0 END) Charges_61_90,
-				SUM(CASE WHEN(trans.TranAmount > 0 OR "+instantAdd+@") AND trans.TranDate < "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY THEN trans.TranAmount ELSE 0 END) ChargesOver90,
-				SUM(CASE WHEN(trans.TranAmount > 0 OR "+instantAdd+@") THEN trans.TranAmount ELSE 0 END) TotalCharges,
-				-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+@") AND trans.TranDate >= "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 30 DAY THEN trans.TranAmount ELSE 0 END) Credits_0_30,
-				-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 60 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 31 DAY THEN trans.TranAmount ELSE 0 END) Credits_31_60,
-				-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 61 DAY THEN trans.TranAmount ELSE 0 END) Credits_61_90,
-				-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+@") AND trans.TranDate < "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY THEN trans.TranAmount ELSE 0 END) CreditsOver90,
-				-SUM(CASE WHEN trans.TranAmount < 0 AND NOT("+instantAdd+@") THEN trans.TranAmount ELSE 0 END) TotalCredits,
+				SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+@") AND trans.TranDate >= "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 30 DAY THEN trans.TranAmount ELSE 0 END) Charges_0_30,
+				SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 60 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 31 DAY THEN trans.TranAmount ELSE 0 END) Charges_31_60,
+				SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+@") AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 61 DAY THEN trans.TranAmount ELSE 0 END) Charges_61_90,
+				SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+@") AND trans.TranDate < "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY THEN trans.TranAmount ELSE 0 END) ChargesOver90,
+				SUM(CASE WHEN ((trans.TranAmount > 0 AND trans.TranType!='PatPay') OR "+transTypesInclude+@") THEN trans.TranAmount ELSE 0 END) TotalCharges,
+				-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+@")) OR trans.TranType='PatPay') AND trans.TranDate >= "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 30 DAY THEN trans.TranAmount ELSE 0 END) Credits_0_30,
+				-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+@")) OR trans.TranType='PatPay') AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 60 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 31 DAY THEN trans.TranAmount ELSE 0 END) Credits_31_60,
+				-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+@")) OR trans.TranType='PatPay') AND trans.TranDate BETWEEN "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY AND "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 61 DAY THEN trans.TranAmount ELSE 0 END) Credits_61_90,
+				-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+@")) OR trans.TranType='PatPay') AND trans.TranDate < "+POut.Date(ageOptions.DateAsOf)+@"-INTERVAL 90 DAY THEN trans.TranAmount ELSE 0 END) CreditsOver90,
+				-SUM(CASE WHEN ((trans.TranAmount < 0 AND NOT("+transTypesInclude+@")) OR trans.TranType='PatPay') THEN trans.TranAmount ELSE 0 END) TotalCredits,
 				SUM(CASE WHEN trans.TranAmount != 0 THEN trans.TranAmount ELSE 0 END) BalTotal
 				FROM (";
 			string tranType=
@@ -510,7 +514,7 @@ namespace OpenDentBusiness {
 			Adjustments = 2,
 			[Description("Pay Plan Charges")]
 			PayPlanCharges = 4,
-			[Description("Pay Plan Credits")]
+			[Description("Pay Plan Production")]
 			PayPlanCredits = 8,
 			[Description("Patient Payments")]
 			PatPayments = 16,

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace OpenDentBusiness.Misc {
 	public class SecurityHash {
 		///<summary>The date Open Dental started hashing fields into various SecurityHash columns. Used to determine if hashing is required. </summary>
-		public static DateTime DateStart=new DateTime(2025,1,29);
+		public static DateTime DateStart=new DateTime(2025,3,27);
 		///<summary>Only set to false for standalone hashing tool. </summary>
 		public static bool IsThreaded=true;
 		private static bool _arePaySplitsUpdated=false;
@@ -19,6 +19,7 @@ namespace OpenDentBusiness.Misc {
 		private static bool _arePayPlansUpdated=false;
 		private static bool _areClaimsUpdated=false;
 		private static bool _areClaimProcsUpdated=false;
+		private static List<Thread> _listHashThreads=new List<Thread>();
 
 		///<summary>This method is NOT safe to invoke during database conversions. It is only to be called AFTER all conversions have taken place in order to avoid a rare table lockup. 
 		///Runs a hashing algorithm over all tables for which Open Dental is enforcing database integrity. Overwrites any existing SecurityHashes with new ones for recent entries, except Patient table.</summary>
@@ -30,6 +31,7 @@ namespace OpenDentBusiness.Misc {
 			RunAppointment();
 			RunClaim();
 			RunPayPlan();
+			ThreadJoinHelper();//Used to dispose of HashAlgorithms in the threads above
 			string updating="Updating database.";
 			ODEvent.Fire(ODEventType.ConvertDatabases,updating);
 		}
@@ -73,6 +75,7 @@ namespace OpenDentBusiness.Misc {
 				Thread thread=new Thread(threadStart);
 				thread.IsBackground=true;
 				thread.Start();
+				_listHashThreads.Add(thread);
 			}
 			else{
 				PaysplitWorker();
@@ -174,6 +177,7 @@ namespace OpenDentBusiness.Misc {
 				Thread thread=new Thread(threadStart);
 				thread.IsBackground=true;
 				thread.Start();
+				_listHashThreads.Add(thread);
 			}
 			else{
 				PatientWorker();
@@ -317,6 +321,7 @@ namespace OpenDentBusiness.Misc {
 				Thread thread=new Thread(threadStart);
 				thread.IsBackground=true;
 				thread.Start();
+				_listHashThreads.Add(thread);
 			}
 			else{
 				ClaimProcWorker();
@@ -354,5 +359,16 @@ namespace OpenDentBusiness.Misc {
 			}
 		}
 
+		/// <summary>Handles the disposing of HashAlgorithms during updates. /// </summary>
+		private static void ThreadJoinHelper() {
+			static void joinThreads() {
+				_listHashThreads.ForEach(x => x?.Join());
+				CDT.Class1.DisposeHashAlgorithm();
+			}
+			ThreadStart threadStart=new ThreadStart(joinThreads);
+			Thread threadJoin=new Thread(threadStart);
+			threadJoin.IsBackground=true;
+			threadJoin.Start();
+		}
 	}
 }

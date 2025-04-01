@@ -1001,26 +1001,15 @@ namespace OpenDentBusiness.Eclaims {
 				formCCDPrint(etrans,result,true);//Physically print the form.
 			}
 			if(canCreateSecClaim) {//The below logic mimics EOBImportHelper().
-				Dictionary<int,List<CCDField>> dictProcDataClaim=fieldInputter.GetPerformedProcsDict();
-				if(dictProcDataClaim.Count>0) {
-					bool isFullyEligible=true;
-					for(int i=0;i<claimProcsClaim.Count;i++) {
-						if(claimProcsClaim[i].LineNumber==0) {
-							continue;
-						}
-						if(!dictProcDataClaim.ContainsKey(claimProcsClaim[i].LineNumber)) {
-							continue;//See task 5538948. This can happen rarely when the EOB does not contain a response for one of the procedures going out on the eclaim.
-						}
-						foreach(CCDField field in dictProcDataClaim[claimProcsClaim[i].LineNumber]) {
-							if(field.fieldId=="G14" && field.valuestr!="100") {//G14 is elegible percent for procedure
-								isFullyEligible=false;
-								break;
-							}
-						}
-					}
-					if(isFullyEligible) {
-						canCreateSecClaim=false;//Primary EOB paid services in full, no need to create secondary claim.
-					}
+				//G15 Benefit Amount for the Procedure, G58 Benefit Amount for Lab Procedure #1, G61 Benefit Amount for Lab Procedure Code #2. G23 Benefit Amount for Additional Procedure (carrier issued).
+				List<CCDField> listFieldsForBenefit=fieldInputter.GetFieldsByIds("G15","G58","G61","G23");
+				int totalBenefitAmount=0;
+				for(int i=0;i<listFieldsForBenefit.Count;i++) {
+					totalBenefitAmount+=int.Parse(listFieldsForBenefit[i].valuestr);
+				}
+				int totalAmtOfService=int.Parse(fieldInputter.GetFieldById("G04").valuestr);//G04 Total Amount of Service
+				if(totalAmtOfService==totalBenefitAmount) {
+					canCreateSecClaim=false;
 				}
 			}
 			ClaimSendQueueItem queueItem2=null;
@@ -2451,7 +2440,7 @@ namespace OpenDentBusiness.Eclaims {
 		}
 
 		///<summary>Returns a string describing all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.</summary>
-		public static string GetMissingData(ClaimSendQueueItem queueItem) {
+		public static string GetMissingData(ClaimSendQueueItem queueItem,bool isNewClaim) {
 			string retVal="";
 			Claim claim=Claims.GetClaim(queueItem.ClaimNum);
 			Provider providerFirst=Providers.GetFirst();//Used in order to preserve old behavior...  If this fails, then old code would have failed.
@@ -2694,7 +2683,7 @@ namespace OpenDentBusiness.Eclaims {
 				retVal+="Referral provider";
 			}
 			//Max Prosth--------------------------------------------------------------------------------------------------
-			if(claim.CanadianIsInitialUpper=="") {
+			if(!isNewClaim && claim.CanadianIsInitialUpper=="") {
 				if(retVal!="")
 					retVal+=", ";
 				retVal+="Max prosth";
@@ -2722,7 +2711,7 @@ namespace OpenDentBusiness.Eclaims {
 				retVal+="Max prosth material";
 			}
 			//Mand prosth--------------------------------------------------------------------------------------------------
-			if(claim.CanadianIsInitialLower=="") {
+			if(!isNewClaim && claim.CanadianIsInitialLower=="") {
 				if(retVal!="")
 					retVal+=", ";
 				retVal+="Mand prosth";

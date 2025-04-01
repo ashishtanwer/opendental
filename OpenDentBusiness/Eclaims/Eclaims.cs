@@ -237,10 +237,10 @@ namespace OpenDentBusiness.Eclaims
 		}
 
 		///<summary>Fills the missing data field on the queueItem that was passed in.  This contains all missing data on this claim.  Claim will not be allowed to be sent electronically unless this string comes back empty.  Set skipUB04 true to skip validating fields within the UB04 group box in the Claim Edit window.</summary>
-		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem,bool skipUB04=false) {
+		public static ClaimSendQueueItem GetMissingData(Clearinghouse clearinghouseClin,ClaimSendQueueItem queueItem,bool skipUB04=false,bool isNewClaim=false) {
 			//Middle Tier check is a necessary part of speed enhancements implemented in job E3915. 
 			if(RemotingClient.MiddleTierRole==MiddleTierRole.ClientMT) {
-				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem,skipUB04);
+				return Meth.GetObject<ClaimSendQueueItem>(MethodBase.GetCurrentMethod(),clearinghouseClin,queueItem,skipUB04,isNewClaim);
 			}
 			if(queueItem==null) {
 				return new ClaimSendQueueItem() { MissingData=Lans.g("Eclaims","Unable to fill claim data. Please recreate claim.") };
@@ -299,7 +299,7 @@ namespace OpenDentBusiness.Eclaims
 					//return;
 				}
 				else if(clearinghouseClin.Eformat==ElectronicClaimFormat.Canadian) {
-					queueItem.MissingData=Canadian.GetMissingData(queueItem);//will also set warnings
+					queueItem.MissingData=Canadian.GetMissingData(queueItem,isNewClaim);//will also set warnings
 					//return;
 				}
 				else if(clearinghouseClin.Eformat==ElectronicClaimFormat.Dutch) {

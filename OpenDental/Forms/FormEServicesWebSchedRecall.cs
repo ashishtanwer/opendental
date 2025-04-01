@@ -575,10 +575,10 @@ namespace OpenDental {
 			if(Prefs.UpdateInt(PrefName.WebSchedAutomaticSendTextSetting,(int)webSchedAutomaticSendTextNew)) {
 				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched automated text preference changed from "+webSchedAutomaticSendTextOld.ToString()+" to "+webSchedAutomaticSendTextNew.ToString()+".");
 			}
-			int textsPerBatchOld=PrefC.GetInt(PrefName.WebSchedTextsPerBatch);
-			int textsPerBatchNew=PIn.Int(textWebSchedPerBatch.Text,false);
-			if(Prefs.UpdateInt(PrefName.WebSchedTextsPerBatch,textsPerBatchNew)) {
-				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched batch size preference changed from "+textsPerBatchOld.ToString()+" to "+textsPerBatchNew.ToString()+".");
+			int webSchedPerBatchOld=PrefC.GetInt(PrefName.WebSchedTextsPerBatch);
+			int webSchedPerBatchNew=PIn.Int(textWebSchedPerBatch.Text,false);
+			if(Prefs.UpdateInt(PrefName.WebSchedTextsPerBatch,webSchedPerBatchNew)) {
+				SecurityLogs.MakeLogEntry(EnumPermType.Setup,0,"WebSched batch size preference changed from "+webSchedPerBatchOld.ToString()+" to "+webSchedPerBatchNew.ToString()+".");
 			}
 			int recallApptDays=PIn.Int(textWebSchedRecallApptSearchDays.Text);
 			Prefs.UpdateInt(PrefName.WebSchedRecallApptSearchAfterDays,recallApptDays);

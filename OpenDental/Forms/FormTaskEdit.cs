@@ -634,6 +634,16 @@ namespace OpenDental {
 			if(_formTaskNoteEdit.DialogResult!=DialogResult.OK) {
 				return;
 			}
+			DateTime dateTimeUI=new DateTime(datePickerReminder.Value.Date.Year,datePickerReminder.Value.Date.Month,datePickerReminder.Value.Date.Day,
+				timePickerReminder.Value.TimeOfDay.Hours,timePickerReminder.Value.TimeOfDay.Minutes,timePickerReminder.Value.TimeOfDay.Seconds);//DateTime is split up between two controls in the UI
+			if(PrefC.IsODHQ 
+				&& comboReminderRepeat.SelectedIndex!=0 //reminder task
+				&& dateTimeUI>DateTime.Now) 
+			{
+				if(MsgBox.Show(this,MsgBoxButtons.YesNo,"Convert this future reminder task to an ordinary task, so that it will show in their task list?")){
+					comboReminderRepeat.SelectedIndex=0;
+				}
+			}
 			DidNotesChange=true;
 			if(_taskOld.TaskStatus==TaskStatusEnum.Done) {//If task was marked Done when opened, we uncheck the Done checkbox so people can see the changes.
 				checkDone.Checked=false;

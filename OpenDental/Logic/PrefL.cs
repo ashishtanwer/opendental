@@ -1264,8 +1264,7 @@ namespace OpenDental {
 			return true;
 		}
 
-		///<summary>Returns true if the API service is already installed or was successfully installed. Otherwise; false.
-		///Set isSilent to false to show meaningful error messages, otherwise fails silently.</summary>
+		///<summary>Returns true if the API service is already installed or was successfully installed. Otherwise; false. Always attempts to install the API service. Set isSilent to false to show meaningful error messages, otherwise fails silently.</summary>
 		public static bool TryInstallOpenDentalApiService(bool isSilent,string updateServerName=null) {
 			if(updateServerName==null) {
 				updateServerName=PrefC.GetString(PrefName.WebServiceServerName);
@@ -1289,10 +1288,6 @@ namespace OpenDental {
 			}
 			if(!ODEnvironment.IdIsThisComputer(updateServerName)) {
 				return false;//This is not an error and is simply not the correct computer that should have the API service installed on it.
-			}
-			if(!Programs.IsEnabledNoCache(ProgramName.FHIR)) {
-				actionDisplayError(Lans.g("ServicesHelper","The API (FHIR) program link is not enabled."));
-				return false;
 			}
 			List<ServiceController> listServiceControllersAPI=new List<ServiceController>();
 			FileInfo fileInfoApiExe;

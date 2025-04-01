@@ -1957,7 +1957,7 @@ namespace OpenDentBusiness {
 		}
 
 		///<summary>Returns an error string if the passed in PayPlanTerms violates any of the rules for dynamic payment plans. Returns an empty string if everything is valid.</summary>
-		public static string ValidateDynamicPaymentPlanTerms(PayPlanTerms payPlanTerms,bool isNew,bool isLocked, bool doCheckApr,int linkedProdCount) {
+		public static string ValidateDynamicPaymentPlanTerms(PayPlanTerms payPlanTerms,bool isNew,bool isLocked, bool doCheckApr,int linkedProdCount,bool isCloseout=false) {
 			Meth.NoCheckMiddleTierRole();
 			StringBuilder sb=new StringBuilder("");
 			//User has to enter a payment amount when creating a payplan with no linked prods
@@ -1989,7 +1989,13 @@ namespace OpenDentBusiness {
 			Action<string> actionNotAuthorized=(msg) => {
 				sb.AppendLine(Lans.g("FormPayPlanDynamic",msg));
 			};
-			Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,payPlanTerms.DateAgreement,suppressMsgBox:true,actionNotAuthorized:actionNotAuthorized);
+			if(!isCloseout) {
+				//if closing out a payment plan, this does not need to be checked against global lock date
+				//because we don't care about the agreement date.
+				//The closing out is always essentially "today", which global locks would never need to interfere with.
+				Security.IsGlobalDateLock(EnumPermType.PayPlanEdit,payPlanTerms.DateAgreement,suppressMsgBox:true,actionNotAuthorized:actionNotAuthorized);
+				//if not authorized, the action adds that msg to the sb, which indicates a problem in the calling class.
+			}
 			return sb.ToString();
 		}
 

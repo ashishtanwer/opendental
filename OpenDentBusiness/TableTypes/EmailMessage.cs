@@ -207,11 +207,11 @@ namespace OpenDentBusiness {
 
 	///<summary></summary>
 	public enum EmailType {
-		///<summary>0 - This is a regular email that may contain our special wiki markup.</summary>
+		///<summary>0 - This is a regular email that may contain our special wiki markup. Not converted to html.</summary>
 		Regular,
-		///<summary>1 - Html. Basic html email which uses the master template.</summary>
+		///<summary>1 - Html. Basic html email which uses the master template supplied by OD. Template includes header, styles, and the opening body tag. The user only needs to provide the body itself, which can inclcude tags that get automatically replaced.</summary>
 		Html,
-		///<summary>2 - More advanced html that does not include the master template, user must provide everything.</summary>
+		///<summary>2 - More advanced html that does not include the master template. User must provide everything.</summary>
 		RawHtml
 	}	
 

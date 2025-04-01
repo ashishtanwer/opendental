@@ -502,15 +502,24 @@ namespace OpenDental {
 		}
 
 		private void buttonAddImage_Click(object sender,EventArgs e) {
-			string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
-			using OpenFileDialog openFileDialog=new OpenFileDialog();
-			openFileDialog.Multiselect=false;
-			openFileDialog.InitialDirectory=patFolder;
-			if(openFileDialog.ShowDialog()!=DialogResult.OK) {
-				return;
+			string selectedFile="";
+			if(!ODBuild.IsThinfinity() && ODCloudClient.IsAppStream) {
+				selectedFile=ODCloudClient.ImportFileForCloud().FirstOrDefault();
+				if(selectedFile.IsNullOrEmpty()) {
+					return; //User cancelled out of OpenFileDialog
+				}
 			}
-			//The filename property is the entire path of the file.
-			string selectedFile=openFileDialog.FileName;
+			else {
+				string patFolder=ImageStore.GetPatientFolder(_patient,ImageStore.GetPreferredAtoZpath());
+				using OpenFileDialog openFileDialog=new OpenFileDialog();
+				openFileDialog.Multiselect=false;
+				openFileDialog.InitialDirectory=patFolder;
+				if(openFileDialog.ShowDialog()!=DialogResult.OK) {
+					return;
+				}
+				//The filename property is the entire path of the file.
+				selectedFile=openFileDialog.FileName;
+			}
 			if(selectedFile.EndsWith(".pdf")) {
 				MessageBox.Show(this,"PDF attachments are not supported.");
 				return;
